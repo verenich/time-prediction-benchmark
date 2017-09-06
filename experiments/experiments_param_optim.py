@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import sys
-from sklearn.metrics import roc_auc_score, precision_recall_fscore_support
+from sklearn.metrics import mean_absolute_error, precision_recall_fscore_support
 from sklearn.pipeline import Pipeline, FeatureUnion
 from time import time
 import pickle
@@ -18,8 +18,15 @@ dataset_ref = argv[1]
 bucket_encoding = argv[2]
 bucket_method = argv[3]
 cls_encoding = argv[4]
-cls_method = argv[5]
-results_dir = argv[6]
+cls_method = "rf"
+results_dir = "../results/CV/"
+
+# dataset_ref = "bpic2015"
+# bucket_encoding = "bool"
+# bucket_method = "prefix"
+# cls_encoding = "index"
+# cls_method = "rf"
+# results_dir = "/home/coderus/Temp/git/time-prediction-benchmark/results/"
 
 method_name = "%s_%s"%(bucket_method, cls_encoding)
 
@@ -52,7 +59,7 @@ else:
 
 # classification params to optimize
 if cls_method == "rf":
-    cls_params = {'n_estimators':[500], 
+    cls_params = {'n_estimators':[300],
                   'max_features':["sqrt", 0.05, 0.1, 0.25, 0.5, 0.75]}
     
 elif cls_method == "gbm":
@@ -64,7 +71,7 @@ bucketer_params_names = list(bucketer_params.keys())
 cls_params_names = list(cls_params.keys())
 
 
-outfile = os.path.join(home_dir, results_dir, "cv_results_%s_%s_%s.csv"%(cls_method, method_name, dataset_ref)) 
+outfile = os.path.join(home_dir, results_dir, "cv_results_%s_%s_%s.csv"%(cls_method, method_name, dataset_ref))
 
     
 train_ratio = 0.8
@@ -94,7 +101,7 @@ with open(outfile, 'w') as fout:
         del data
         
         part = 0
-        for train_chunk, test_chunk in dataset_manager.get_stratified_split_generator(train, n_splits=5):
+        for train_chunk, test_chunk in dataset_manager.get_stratified_split_generator(train, n_splits=3):
             part += 1
             print("Starting chunk %s..."%part)
             sys.stdout.flush()
@@ -204,16 +211,16 @@ with open(outfile, 'w') as fout:
                             test_y.extend(test_y_bucket)
 
                         if len(set(test_y)) < 2:
-                            auc = None
+                            mae = None
                         else:
-                            auc = roc_auc_score(test_y, preds)
-                        prec, rec, fscore, _ = precision_recall_fscore_support(test_y, [0 if pred < 0.5 else 1 for pred in preds], average="binary")
+                            mae = mean_absolute_error(test_y, preds)
+                        #prec, rec, fscore, _ = precision_recall_fscore_support(test_y, [0 if pred < 0.5 else 1 for pred in preds], average="binary")
                         bucketer_params_str = ";".join([str(param) for param in bucketer_params_combo])
                         cls_params_str = ";".join([str(param) for param in cls_params_combo])
                                    
-                        fout.write("%s;%s;%s;%s;%s;%s;%s;%s;%s\n"%(part, dataset_name, method_name, cls_method, bucketer_params_str, cls_params_str, nr_events, "auc", auc))
-                        fout.write("%s;%s;%s;%s;%s;%s;%s;%s;%s\n"%(part, dataset_name, method_name, cls_method, bucketer_params_str, cls_params_str, nr_events, "precision", prec))
-                        fout.write("%s;%s;%s;%s;%s;%s;%s;%s;%s\n"%(part, dataset_name, method_name, cls_method, bucketer_params_str, cls_params_str, nr_events, "recall", rec))
-                        fout.write("%s;%s;%s;%s;%s;%s;%s;%s;%s\n"%(part, dataset_name, method_name, cls_method, bucketer_params_str, cls_params_str, nr_events, "fscore", fscore))
+                        fout.write("%s;%s;%s;%s;%s;%s;%s;%s;%s\n"%(part, dataset_name, method_name, cls_method, bucketer_params_str, cls_params_str, nr_events, "mae", mae))
+                        #fout.write("%s;%s;%s;%s;%s;%s;%s;%s;%s\n"%(part, dataset_name, method_name, cls_method, bucketer_params_str, cls_params_str, nr_events, "precision", prec))
+                        #fout.write("%s;%s;%s;%s;%s;%s;%s;%s;%s\n"%(part, dataset_name, method_name, cls_method, bucketer_params_str, cls_params_str, nr_events, "recall", rec))
+                        #fout.write("%s;%s;%s;%s;%s;%s;%s;%s;%s\n"%(part, dataset_name, method_name, cls_method, bucketer_params_str, cls_params_str, nr_events, "fscore", fscore))
 
                     print("\n")

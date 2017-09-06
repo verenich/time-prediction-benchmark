@@ -2,9 +2,9 @@ import pandas as pd
 import numpy as np
 import os
 
-input_data_folder = "../labeled_logs_csv"
-output_data_folder = "../labeled_logs_csv_processed"
-filenames = ["BPIC15_%s_f%s.csv"%(municipality, formula) for municipality in range(1,6) for formula in range(1,3)]
+input_data_folder = "../experiments/labeled_logs_csv"
+output_data_folder = "../experiments/labeled_logs_csv_processed"
+filenames = ["BPIC15_%s_f%s.csv"%(municipality, formula) for municipality in range(1,6) for formula in range(2,3)]
 
 case_id_col = "Case ID"
 activity_col = "Activity"

@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import sys
-from sklearn.metrics import roc_auc_score, precision_recall_fscore_support
+from sklearn.metrics import mean_absolute_error
 from sklearn.pipeline import Pipeline, FeatureUnion
 from time import time
 import pickle
@@ -17,9 +17,15 @@ dataset_ref = argv[1]
 bucket_encoding = argv[2]
 bucket_method = argv[3]
 cls_encoding = argv[4]
-cls_method = argv[5]
-optimal_params_filename = argv[6]
-results_dir = argv[7]
+cls_method = "rf"
+optimal_params_filename = "optimal_params.pickle"
+results_dir = "../results/"
+
+# dataset_ref = "bpic2015"
+# bucket_encoding = "bool"
+# bucket_method = "single"
+# cls_encoding = "agg"
+# cls_method = "rf"
 
 method_name = "%s_%s"%(bucket_method, cls_encoding)
 
@@ -177,14 +183,14 @@ with open(outfile, 'w') as fout:
                 test_y.extend(test_y_bucket)
 
             if len(set(test_y)) < 2:
-                auc = None
+                mae = None
             else:
-                auc = roc_auc_score(test_y, preds)
-            prec, rec, fscore, _ = precision_recall_fscore_support(test_y, [0 if pred < 0.5 else 1 for pred in preds], average="binary")
+                mae = mean_absolute_error(test_y, preds)
+            #prec, rec, fscore, _ = precision_recall_fscore_support(test_y, [0 if pred < 0.5 else 1 for pred in preds], average="binary")
 
-            fout.write("%s;%s;%s;%s;%s;%s\n"%(dataset_name, method_name, cls_method, nr_events, "auc", auc))
-            fout.write("%s;%s;%s;%s;%s;%s\n"%(dataset_name, method_name, cls_method, nr_events, "precision", prec))
-            fout.write("%s;%s;%s;%s;%s;%s\n"%(dataset_name, method_name, cls_method, nr_events, "recall", rec))
-            fout.write("%s;%s;%s;%s;%s;%s\n"%(dataset_name, method_name, cls_method, nr_events, "fscore", fscore))
+            fout.write("%s;%s;%s;%s;%s;%s\n"%(dataset_name, method_name, cls_method, nr_events, "mae", mae))
+            #fout.write("%s;%s;%s;%s;%s;%s\n"%(dataset_name, method_name, cls_method, nr_events, "precision", prec))
+            #fout.write("%s;%s;%s;%s;%s;%s\n"%(dataset_name, method_name, cls_method, nr_events, "recall", rec))
+            #fout.write("%s;%s;%s;%s;%s;%s\n"%(dataset_name, method_name, cls_method, nr_events, "fscore", fscore))
             
         print("\n")

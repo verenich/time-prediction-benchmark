@@ -6,9 +6,11 @@ import pickle
 from sys import argv
 
 
-cv_results_dir = argv[1] # cv_results
-outfile = argv[2] #"optimal_params.pickle"
+#cv_results_dir = argv[1] # cv_results
+#outfile = argv[2] #"optimal_params.pickle"
 
+cv_results_dir = "../results/CV/"
+outfile = "optimal_params.pickle"
 
 # read all files from directory to df
 files = glob.glob("%s/*"%cv_results_dir)
@@ -43,9 +45,9 @@ data_agg = data.groupby(["cls", "dataset", "method", "metric", "nr_events"] + pa
 data_agg_over_all_prefixes = data.groupby(["cls", "dataset", "method", "metric"] + params_cols, as_index=False)["score"].mean()
 
 
-# select the best params
-data_best = data_agg.sort_values("score", ascending=False).groupby(["cls", "dataset", "method", "metric", "nr_events"], as_index=False).first()
-data_best_over_all_prefixes = data_agg_over_all_prefixes.sort_values("score", ascending=False).groupby(["cls", "dataset", "method", "metric"], as_index=False).first()
+# select the best params - lowest MAE
+data_best = data_agg.sort_values("score", ascending=True).groupby(["cls", "dataset", "method", "metric", "nr_events"], as_index=False).first()
+data_best_over_all_prefixes = data_agg_over_all_prefixes.sort_values("score", ascending=True).groupby(["cls", "dataset", "method", "metric"], as_index=False).first()
 
 
 best_params = {}

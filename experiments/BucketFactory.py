@@ -4,7 +4,7 @@ from bucketers.ClusterBasedBucketer import ClusterBasedBucketer
 from bucketers.StateBasedBucketer import StateBasedBucketer
 from bucketers.PrefixLengthBucketer import PrefixLengthBucketer
 from bucketers.NoBucketer import NoBucketer
-from bucketers.KNNBucketer import KNNBucketer
+#from bucketers.KNNBucketer import KNNBucketer
 from sklearn.cluster import KMeans
 
         

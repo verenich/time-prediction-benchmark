@@ -1,5 +1,5 @@
-from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
-from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
+from sklearn.tree import DecisionTreeRegressor
 
 from ClassifierWrapper import ClassifierWrapper
 
@@ -8,16 +8,16 @@ def get_classifier(method, n_estimators, max_features, gbm_learning_rate=None, r
 
     if method == "rf":
         return ClassifierWrapper(
-            cls=RandomForestClassifier(n_estimators=n_estimators, max_features=max_features, random_state=random_state), 
+            cls=RandomForestRegressor(n_estimators=n_estimators, max_features=max_features, random_state=random_state),
             min_cases_for_training=min_cases_for_training)
                
     elif method == "gbm":
         return ClassifierWrapper(
-            cls=GradientBoostingClassifier(n_estimators=n_estimators, max_features=max_features, learning_rate=gbm_learning_rate, random_state=random_state), 
+            cls=GradientBoostingRegressor(n_estimators=n_estimators, max_features=max_features, learning_rate=gbm_learning_rate, random_state=random_state),
             min_cases_for_training=min_cases_for_training)
     elif method == "dt":
         return ClassifierWrapper(
-            cls=DecisionTreeClassifier(random_state=random_state), 
+            cls=DecisionTreeRegressor(random_state=random_state),
             min_cases_for_training=min_cases_for_training)
 
     else:

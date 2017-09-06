@@ -20,7 +20,7 @@ for formula in range(1,5):
     case_id_col[dataset] = "Case ID"
     activity_col[dataset] = "Activity code"
     timestamp_col[dataset] = "Complete Timestamp"
-    label_col[dataset] = "label"
+    label_col[dataset] = "remtime"
     pos_label[dataset] = "deviant"
     neg_label[dataset] = "regular"
 
@@ -34,7 +34,7 @@ for formula in range(1,5):
     
 #### BPIC2015 settings ####
 for municipality in range(1,6):
-    for formula in range(1,3):
+    for formula in range(2,3):
         dataset = "bpic2015_%s_f%s"%(municipality, formula)
         
         filename[dataset] = "labeled_logs_csv_processed/BPIC15_%s_f%s.csv"%(municipality, formula)
@@ -42,7 +42,7 @@ for municipality in range(1,6):
         case_id_col[dataset] = "Case ID"
         activity_col[dataset] = "Activity"
         timestamp_col[dataset] = "Complete Timestamp"
-        label_col[dataset] = "label"
+        label_col[dataset] = "remtime"
         pos_label[dataset] = "deviant"
         neg_label[dataset] = "regular"
 
@@ -68,7 +68,7 @@ filename[dataset] = "labeled_logs_csv_processed/BPIC17.csv"
 case_id_col[dataset] = "Case ID"
 activity_col[dataset] = "Activity"
 timestamp_col[dataset] = "Complete Timestamp"
-label_col[dataset] = "label"
+label_col[dataset] = "remtime"
 neg_label[dataset] = "regular"
 pos_label[dataset] = "deviant"
 
@@ -77,3 +77,49 @@ dynamic_cat_cols[dataset] = ["Activity", 'Resource', 'Action', 'CreditScore', 'E
 static_cat_cols[dataset] = ['ApplicationType', 'LoanGoal']
 dynamic_num_cols[dataset] = ['FirstWithdrawalAmount', 'MonthlyCost', 'NumberOfTerms', 'OfferedAmount', "duration", "month", "weekday", "hour", "activity_duration"]
 static_num_cols[dataset] = ['RequestedAmount']
+
+
+
+#### Traffic fines settings ####
+dataset = "traffic_fines"
+
+filename[dataset] = "labeled_logs_csv_processed/traffic_fines_f3.csv"
+
+case_id_col[dataset] = "Case ID"
+activity_col[dataset] = "Activity"
+timestamp_col[dataset] = "Complete Timestamp"
+label_col[dataset] = "remtime"
+pos_label[dataset] = "deviant"
+neg_label[dataset] = "regular"
+
+# features for classifier
+dynamic_cat_cols[dataset] = ["Activity", "Resource", "lastSent", "notificationType", "dismissal"]
+static_cat_cols[dataset] = ["article", "vehicleClass"]
+dynamic_num_cols[dataset] = ["expense", "duration", "month", "weekday", "hour"]
+static_num_cols[dataset] = ["amount", "points"]
+
+
+
+#### Sepsis Cases settings ####
+dataset = "sepsis"
+
+filename[dataset] = "labeled_logs_csv_processed/Sepsis.csv"
+
+case_id_col[dataset] = "Case ID"
+activity_col[dataset] = "Activity"
+timestamp_col[dataset] = "Complete Timestamp"
+label_col[dataset] = "remtime"
+pos_label[dataset] = "regular"
+neg_label[dataset] = "deviant"
+
+# features for classifier
+dynamic_cat_cols[dataset] = ["Activity", 'Diagnose', 'org:group']
+static_cat_cols[dataset] = ['DiagnosticArtAstrup', 'DiagnosticBlood', 'DiagnosticECG',
+       'DiagnosticIC', 'DiagnosticLacticAcid', 'DiagnosticLiquor',
+       'DiagnosticOther', 'DiagnosticSputum', 'DiagnosticUrinaryCulture',
+       'DiagnosticUrinarySediment', 'DiagnosticXthorax', 'DisfuncOrg',
+       'Hypotensie', 'Hypoxie', 'InfectionSuspected', 'Infusion', 'Oligurie',
+       'SIRSCritHeartRate', 'SIRSCritLeucos', 'SIRSCritTachypnea',
+       'SIRSCritTemperature', 'SIRSCriteria2OrMore']
+dynamic_num_cols[dataset] = ['CRP', 'LacticAcid', 'Leucocytes', "duration", "month", "weekday", "hour"]
+static_num_cols[dataset] = ['Age']

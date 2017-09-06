@@ -5,7 +5,7 @@ import dataset_confs
 import pandas as pd
 import numpy as np
 
-from sklearn.model_selection import StratifiedKFold
+from sklearn.model_selection import KFold
 
 
 class DatasetManager:
@@ -27,8 +27,11 @@ class DatasetManager:
     
     def read_dataset(self):
         # read dataset
-        dtypes = {col:"object" for col in self.dynamic_cat_cols+self.static_cat_cols+[self.case_id_col, self.label_col, self.timestamp_col]}
+        dtypes = {col:"object" for col in self.dynamic_cat_cols+self.static_cat_cols+[self.case_id_col, self.timestamp_col]}
         for col in self.dynamic_num_cols + self.static_num_cols:
+            dtypes[col] = "float"
+
+        for col in self.label_col:
             dtypes[col] = "float"
 
         data = pd.read_csv(dataset_confs.filename[self.dataset_name], sep=";", dtype=dtypes)
@@ -66,7 +69,7 @@ class DatasetManager:
 
 
     def get_pos_case_length_quantile(self, data, quantile=0.90):
-        return int(np.ceil(data[data[self.label_col]==self.pos_label].groupby(self.case_id_col).size().quantile(quantile)))
+        return int(np.ceil(data.groupby(self.case_id_col).size().quantile(quantile)))
 
     def get_indexes(self, data):
         return data.groupby(self.case_id_col).first().index
@@ -75,11 +78,12 @@ class DatasetManager:
         return data[data[self.case_id_col].isin(indexes)]
 
     def get_label(self, data):
-        return data.groupby(self.case_id_col).first()[self.label_col]
+        return data.groupby(self.case_id_col).min()[self.label_col]
     
     def get_label_numeric(self, data):
         y = self.get_label(data) # one row per case
-        return [1 if label == self.pos_label else 0 for label in y]
+        #return [1 if label == self.pos_label else 0 for label in y]
+        return y
     
     def get_class_ratio(self, data):
         class_freqs = data[self.label_col].value_counts()
@@ -87,7 +91,7 @@ class DatasetManager:
     
     def get_stratified_split_generator(self, data, n_splits=5, shuffle=True, random_state=22):
         grouped_firsts = data.groupby(self.case_id_col, as_index=False).first()
-        skf = StratifiedKFold(n_splits=n_splits, shuffle=shuffle, random_state=random_state)
+        skf = KFold(n_splits=n_splits, shuffle=shuffle, random_state=random_state)
         
         for train_index, test_index in skf.split(grouped_firsts, grouped_firsts[self.label_col]):
             current_train_names = grouped_firsts[self.case_id_col][train_index]

@@ -36,8 +36,9 @@ class ClassifierWrapper(object):
             return [self.hardcoded_prediction] * X.shape[0]
                         
         else:
-            preds_pos_label_idx = np.where(self.cls.classes_ == 1)[0][0] 
-            preds = self.cls.predict_proba(X)[:,preds_pos_label_idx]
+            #preds_pos_label_idx = np.where(self.cls.classes_ == 0)[0][0]
+            #preds = self.cls.predict_proba(X)[:,preds_pos_label_idx]
+            preds = self.cls.predict(X)
             self.predict_time = time.time() - start
             return preds
         
