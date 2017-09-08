@@ -99,3 +99,23 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+# Raw logs
+experiments/labeled_logs_csv/
+
+# Results
+results/
+
+# PyCharm files
+.idea/dictionaries/
+.idea/inspectionProfiles/
+.idea/libraries/
+.idea/misc.xml
+.idea/modules.xml
+.idea/snapshots/
+.idea/time-prediction-benchmark.iml
+.idea/vcs.xml
+.idea/workspace.xml
+
+# job output files
+job_*

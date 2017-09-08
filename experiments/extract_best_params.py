@@ -23,7 +23,7 @@ for file in files[1:]:
     
     
 # select best params according to auc only
-data = data[data.metric=="auc"]
+data = data[data.metric=="mae"]
 
 
 # fix cases where score is unknown
