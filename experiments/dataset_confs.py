@@ -12,51 +12,50 @@ static_num_cols = {}
 filename = {}
 
 #### BPIC2011 settings ####
-for formula in range(1,5):
-    dataset = "bpic2011_f%s"%formula 
+dataset = "bpic2011"
+
+filename[dataset] = "labeled_logs_csv_processed/BPIC11.csv"
+
+case_id_col[dataset] = "Case ID"
+activity_col[dataset] = "Activity code"
+timestamp_col[dataset] = "Complete Timestamp"
+label_col[dataset] = "remtime"
+pos_label[dataset] = "deviant"
+neg_label[dataset] = "regular"
+
+# features for classifier
+dynamic_cat_cols[dataset] = ["Activity code", "Producer code", "Section", "Specialism code", "group"]
+static_cat_cols[dataset] = ["Diagnosis", "Treatment code", "Diagnosis code", "case Specialism code", "Diagnosis Treatment Combination ID"]
+dynamic_num_cols[dataset] = ["Number of executions", "duration", "month", "weekday", "hour"]
+static_num_cols[dataset] = ["Age"]
     
-    filename[dataset] = "labeled_logs_csv_processed/BPIC11_f%s.csv"%formula
+
     
+#### BPIC2015 settings ####
+for municipality in range(1,6):
+
+    dataset = "bpic2015_%s"%municipality
+
+    filename[dataset] = "labeled_logs_csv_processed/BPIC15_%s.csv"%municipality
+
     case_id_col[dataset] = "Case ID"
-    activity_col[dataset] = "Activity code"
+    activity_col[dataset] = "Activity"
     timestamp_col[dataset] = "Complete Timestamp"
     label_col[dataset] = "remtime"
     pos_label[dataset] = "deviant"
     neg_label[dataset] = "regular"
 
     # features for classifier
-    dynamic_cat_cols[dataset] = ["Activity code", "Producer code", "Section", "Specialism code", "group"]
-    static_cat_cols[dataset] = ["Diagnosis", "Treatment code", "Diagnosis code", "case Specialism code", "Diagnosis Treatment Combination ID"]
-    dynamic_num_cols[dataset] = ["Number of executions", "duration", "month", "weekday", "hour"]
-    static_num_cols[dataset] = ["Age"]
-    
+    dynamic_cat_cols[dataset] = ["Activity", "monitoringResource", "question", "Resource"]
+    static_cat_cols[dataset] = ["Responsible_actor"]
+    dynamic_num_cols[dataset] = ["duration", "month", "weekday", "hour"]
+    static_num_cols[dataset] = ["SUMleges", 'Aanleg (Uitvoeren werk of werkzaamheid)', 'Bouw', 'Brandveilig gebruik (vergunning)', 'Gebiedsbescherming', 'Handelen in strijd met regels RO', 'Inrit/Uitweg', 'Kap', 'Milieu (neutraal wijziging)', 'Milieu (omgevingsvergunning beperkte milieutoets)', 'Milieu (vergunning)', 'Monument', 'Reclame', 'Sloop']
 
-    
-#### BPIC2015 settings ####
-for municipality in range(1,6):
-    for formula in range(2,3):
-        dataset = "bpic2015_%s_f%s"%(municipality, formula)
-        
-        filename[dataset] = "labeled_logs_csv_processed/BPIC15_%s_f%s.csv"%(municipality, formula)
-
-        case_id_col[dataset] = "Case ID"
-        activity_col[dataset] = "Activity"
-        timestamp_col[dataset] = "Complete Timestamp"
-        label_col[dataset] = "remtime"
-        pos_label[dataset] = "deviant"
-        neg_label[dataset] = "regular"
-
-        # features for classifier
-        dynamic_cat_cols[dataset] = ["Activity", "monitoringResource", "question", "Resource"]
-        static_cat_cols[dataset] = ["Responsible_actor"]
-        dynamic_num_cols[dataset] = ["duration", "month", "weekday", "hour"]
-        static_num_cols[dataset] = ["SUMleges", 'Aanleg (Uitvoeren werk of werkzaamheid)', 'Bouw', 'Brandveilig gebruik (vergunning)', 'Gebiedsbescherming', 'Handelen in strijd met regels RO', 'Inrit/Uitweg', 'Kap', 'Milieu (neutraal wijziging)', 'Milieu (omgevingsvergunning beperkte milieutoets)', 'Milieu (vergunning)', 'Monument', 'Reclame', 'Sloop']
-        
-        if municipality in [3,5]:
-            static_num_cols[dataset].append('Flora en Fauna')
-        if municipality in [1,2,3,5]:
-            static_num_cols[dataset].append('Brandveilig gebruik (melding)')
-            static_num_cols[dataset].append('Milieu (melding)')
+    if municipality in [3,5]:
+        static_num_cols[dataset].append('Flora en Fauna')
+    if municipality in [1,2,3,5]:
+        static_num_cols[dataset].append('Brandveilig gebruik (melding)')
+        static_num_cols[dataset].append('Milieu (melding)')
 
 
 
@@ -83,7 +82,7 @@ static_num_cols[dataset] = ['RequestedAmount']
 #### Traffic fines settings ####
 dataset = "traffic_fines"
 
-filename[dataset] = "labeled_logs_csv_processed/traffic_fines_f3.csv"
+filename[dataset] = "labeled_logs_csv_processed/traffic_fines.csv"
 
 case_id_col[dataset] = "Case ID"
 activity_col[dataset] = "Activity"
