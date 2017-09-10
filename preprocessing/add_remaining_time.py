@@ -5,11 +5,12 @@ import os
 input_data_folder = "../experiments/labeled_logs_csv"
 output_data_folder = "../experiments/labeled_logs_csv_processed"
 
-filenames_bpic2011 = ["BPIC11_f%s.csv"%(formula) for formula in range(1,5)]
-filenames_bpic2015 = ["BPIC15_%s_f2.csv"%municipality for municipality in range(1,6)]
+filenames_bpic2011 = ["BPIC11.csv"]
+filenames_bpic2015 = ["BPIC15_%s.csv"%municipality for municipality in range(1,6)]
 filenames_bpic2017 = ["BPIC17.csv"]
-filenames_others = ["traffic_fines_f3.csv", "Sepsis.csv"]
-filenames = filenames_bpic2011 + filenames_bpic2015 + filenames_bpic2017 + filenames_others
+filenames_others = ["traffic_fines.csv", "Sepsis.csv"]
+#filenames = filenames_bpic2011 + filenames_bpic2015 + filenames_bpic2017 + filenames_others
+filenames = ["traffic_fines.csv"]
 timestamp_col = "Complete Timestamp"
 label_col = "label"
 case_id_col = "Case ID"

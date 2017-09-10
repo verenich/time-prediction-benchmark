@@ -32,8 +32,8 @@ with open(os.path.join(home_dir, optimal_params_filename), "rb") as fin:
     best_params = pickle.load(fin)
 
 dataset_ref_to_datasets = {
-    "bpic2011": ["bpic2011_f%s"%formula for formula in range(1,5)],
-    "bpic2015": ["bpic2015_%s_f2"%(municipality) for municipality in range(1,6)],
+    "bpic2011": ["bpic2011"],
+    "bpic2015": ["bpic2015_%s"%municipality for municipality in range(1,6)],
     "insurance": ["insurance_activity", "insurance_followup"],
     "bpic2017": ["bpic2017"]
 }

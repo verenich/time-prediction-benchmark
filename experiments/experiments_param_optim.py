@@ -36,8 +36,8 @@ if not os.path.exists(os.path.join(home_dir, results_dir)):
     os.makedirs(os.path.join(home_dir, results_dir))
 
 dataset_ref_to_datasets = {
-    "bpic2011": ["bpic2011_f%s"%formula for formula in range(1,5)],
-    "bpic2015": ["bpic2015_%s_f2"%(municipality) for municipality in range(1,6)],
+    "bpic2011": ["bpic2011"],
+    "bpic2015": ["bpic2015_%s"%municipality for municipality in range(1,6)],
     "insurance": ["insurance_activity", "insurance_followup"],
     "bpic2017": ["bpic2017"]
 }
@@ -101,7 +101,7 @@ with open(outfile, 'w') as fout:
         del data
         
         part = 0
-        for train_chunk, test_chunk in dataset_manager.get_stratified_split_generator(train, n_splits=3):
+        for train_chunk, test_chunk in dataset_manager.get_stratified_split_generator(train, n_splits=5):
             part += 1
             print("Starting chunk %s..."%part)
             sys.stdout.flush()

@@ -4,7 +4,7 @@ import os
 
 input_data_folder = "../labeled_logs_csv"
 output_data_folder = "../labeled_logs_csv_processed"
-filenames = ["BPIC11_f%s.csv"%(formula) for formula in range(1,5)]
+filenames = ["BPIC11.csv"]
 
 case_id_col = "Case ID"
 activity_col = "Activity code"
