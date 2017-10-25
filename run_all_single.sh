@@ -1,20 +1,20 @@
 #!/bin/bash -l
 
-for DATASET_NAME in sepsis bpic2011 bpic2015 bpic2017 traffic_fines
-#for DATASET_NAME in sepsis
+for DATASET_NAME in bpic2017
+#for DATASET_NAME in bpic2017 traffic_fines
 do
-    for BUCKET_METHOD in prefix single
+    for BUCKET_METHOD in state single cluster prefix
     do
         for CLS_ENCODING in agg index laststate combined
         do
             if [ $DATASET_NAME == "sepsis" ] ; then
-                memory=15gb
+                memory=10gb
             elif [ $DATASET_NAME == "traffic_fines" ] ; then
-                memory=30gb
+                memory=15gb
             else
-                memory=20gb
+                memory=15gb
             fi
-            qsub -l mem=$memory -l walltime=23:00:00 -N job_$DATASET_NAME$BUCKET_METHOD$CLS_ENCODING -v dataset=$DATASET_NAME,method=$BUCKET_METHOD,encoding=$CLS_ENCODING run.sh
+            qsub -l mem=$memory -l walltime=43:00:00 -N job_"$DATASET_NAME"_"$BUCKET_METHOD"_"$CLS_ENCODING" -v dataset=$DATASET_NAME,method=$BUCKET_METHOD,encoding=$CLS_ENCODING run.sh
         done
     done
 done

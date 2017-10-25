@@ -53,14 +53,14 @@ methods = encoding_dict[cls_encoding]
 
 # bucketing params to optimize 
 if bucket_method == "cluster":
-    bucketer_params = {'n_clusters':[2, 5, 7, 10, 20, 40]}
+    bucketer_params = {'n_clusters':[2, 5, 7, 10, 20]}
 else:
     bucketer_params = {'n_clusters':[1]}
 
 # classification params to optimize
 if cls_method == "rf":
     cls_params = {'n_estimators':[300],
-                  'max_features':["sqrt", 0.05, 0.1, 0.25, 0.5, 0.75]}
+                  'max_features':["sqrt", 0.1, 0.25, 0.5, 0.75]}
     
 elif cls_method == "gbm":
     cls_params = {'n_estimators':[100, 250, 500, 1000], 
@@ -197,8 +197,9 @@ with open(outfile, 'w') as fout:
                                 continue
 
                             elif bucket not in pipelines:
-                                # use the general class ratio (in training set) as prediction 
-                                preds_bucket = [dataset_manager.get_class_ratio(train_chunk)] * len(relevant_cases_bucket)
+                                # use mean remaining time (in training set) as prediction
+                                preds_bucket = [np.mean(train_chunk["remtime"])] * len(relevant_cases_bucket)
+                                # preds_bucket = [dataset_manager.get_class_ratio(train_chunk)] * len(relevant_cases_bucket)
 
                             else:
                                 # make actual predictions

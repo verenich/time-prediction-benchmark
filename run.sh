@@ -11,7 +11,7 @@
 # Here, finally you can put the actual commands of your job, that will be run
 # on the cluster.
 source /etc/profile.d/modules.sh
-module load python/2.7.13-foss-2017a
+module load python/3.5.2-foss-2016b
 python -V
 export PYTHONPATH=/home/n9334378/time-prediction-benchmark/
 cd /home/n9334378/time-prediction-benchmark/experiments

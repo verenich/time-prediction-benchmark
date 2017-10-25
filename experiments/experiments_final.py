@@ -168,7 +168,7 @@ with open(outfile, 'w') as fout:
                 if len(relevant_cases_bucket) == 0:
                     continue
 
-                elif bucket not in pipelines:
+                elif bucket not in pipelines: # TODO fix this
                     # use the general class ratio (in training set) as prediction 
                     preds_bucket = [dataset_manager.get_class_ratio(train)] * len(relevant_cases_bucket)
 
