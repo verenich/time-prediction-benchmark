@@ -14,11 +14,11 @@ import ClassifierFactory
 from DatasetManager import DatasetManager
 
 dataset_ref = argv[1]
-bucket_encoding = argv[2]
-bucket_method = argv[3]
-cls_encoding = argv[4]
-cls_method = "rf"
-optimal_params_filename = "optimal_params.pickle"
+bucket_encoding = "agg"
+bucket_method = argv[2]
+cls_encoding = argv[3]
+cls_method = argv[4]
+optimal_params_filename = "training_params.pkl"
 results_dir = "../results/"
 
 # dataset_ref = "bpic2015"

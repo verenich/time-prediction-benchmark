@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import sys
-from sklearn.metrics import mean_absolute_error, precision_recall_fscore_support
+from sklearn.metrics import mean_absolute_error
 from sklearn.pipeline import Pipeline, FeatureUnion
 from time import time
 import pickle
@@ -15,10 +15,10 @@ import ClassifierFactory
 from DatasetManager import DatasetManager
 
 dataset_ref = argv[1]
-bucket_encoding = argv[2]
-bucket_method = argv[3]
-cls_encoding = argv[4]
-cls_method = "rf"
+bucket_encoding = "agg"
+bucket_method = argv[2]
+cls_encoding = argv[3]
+cls_method = argv[4]
 results_dir = "../results/CV/"
 
 # dataset_ref = "bpic2015"
@@ -53,18 +53,18 @@ methods = encoding_dict[cls_encoding]
 
 # bucketing params to optimize 
 if bucket_method == "cluster":
-    bucketer_params = {'n_clusters':[2, 5, 7, 10, 20]}
+    bucketer_params = {'n_clusters':[2, 5, 10, 20]}
 else:
     bucketer_params = {'n_clusters':[1]}
 
 # classification params to optimize
 if cls_method == "rf":
     cls_params = {'n_estimators':[300],
-                  'max_features':["sqrt", 0.1, 0.25, 0.5, 0.75]}
+                  'max_features':["sqrt", 0.1, 0.5, 0.75]}
     
 elif cls_method == "gbm":
-    cls_params = {'n_estimators':[100, 250, 500, 1000], 
-                  'max_features':["sqrt", 0.1, 0.25, 0.75], 
+    cls_params = {'n_estimators':[100, 250, 500],
+                  'max_features':["sqrt", 0.25, 0.75],
                   'gbm_learning_rate':[0.01, 0.05, 0.1]}
 
 bucketer_params_names = list(bucketer_params.keys())

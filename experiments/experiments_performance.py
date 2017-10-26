@@ -18,7 +18,7 @@ bucket_encoding = argv[2]
 bucket_method = argv[3]
 cls_encoding = argv[4]
 cls_method = "rf"
-optimal_params_filename = "optimal_params.pickle"
+optimal_params_filename = "optimal_params.pkl"
 results_dir = "../results/"
 
 method_name = "%s_%s"%(bucket_method, cls_encoding)
