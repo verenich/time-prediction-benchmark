@@ -21,7 +21,7 @@ class ClassifierWrapper(object):
 
         else:
             self.cls.fit(X, y)
-         return self
+            return self
     
     
     def predict_proba(self, X, y=None):
