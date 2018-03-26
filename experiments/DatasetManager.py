@@ -69,7 +69,7 @@ class DatasetManager:
 
 
     def get_pos_case_length_quantile(self, data, quantile=0.90):
-        return int(np.ceil(data.groupby(self.case_id_col).size().quantile(quantile)))
+        return int(np.floor(data.groupby(self.case_id_col).size().quantile(quantile)))
 
     def get_indexes(self, data):
         return data.groupby(self.case_id_col).first().index

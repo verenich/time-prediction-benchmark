@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+from numpy import array
 import sys
 from sklearn.metrics import mean_absolute_error
 from sklearn.pipeline import Pipeline, FeatureUnion
@@ -170,12 +171,13 @@ with open(outfile, 'w') as fout:
 
                 elif bucket not in pipelines: # TODO fix this
                     # use the general class ratio (in training set) as prediction 
-                    preds_bucket = [dataset_manager.get_class_ratio(train)] * len(relevant_cases_bucket)
+                    preds_bucket = array([np.mean(train["remtime"])] * len(relevant_cases_bucket))
 
                 else:
                     # make actual predictions
                     preds_bucket = pipelines[bucket].predict_proba(dt_test_bucket)
 
+                preds_bucket = preds_bucket.clip(min=0)  # if remaining time is predicted to be negative, make it zero
                 preds.extend(preds_bucket)
 
                 # extract actual label values

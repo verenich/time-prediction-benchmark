@@ -28,7 +28,7 @@ class AggregateTransformer(TransformerMixin):
         
         # transform numeric cols
         if len(self.num_cols) > 0:
-            dt_numeric = X.groupby(self.case_id_col)[self.num_cols].agg({'mean':np.mean, 'max':np.max, 'min':np.min, 'sum':np.sum, 'std':np.std})
+            dt_numeric = X.groupby(self.case_id_col)[self.num_cols].agg(["mean", "max", "min", "sum", "std"])
             dt_numeric.columns = ['_'.join(col).strip() for col in dt_numeric.columns.values]
             
         # transform cat cols

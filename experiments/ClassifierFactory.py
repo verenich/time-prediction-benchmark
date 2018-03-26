@@ -1,23 +1,21 @@
 from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
 from sklearn.tree import DecisionTreeRegressor
+import xgboost as xgb
 
 from ClassifierWrapper import ClassifierWrapper
 
 
-def get_classifier(method, n_estimators, max_features, gbm_learning_rate=None, random_state=None, min_cases_for_training=30):
+def get_classifier(method, n_estimators, max_features=None, learning_rate=None, max_depth=None, random_state=None, subsample=None, colsample_bytree=None, min_cases_for_training=30):
 
     if method == "rf":
         return ClassifierWrapper(
             cls=RandomForestRegressor(n_estimators=n_estimators, max_features=max_features, random_state=random_state),
             min_cases_for_training=min_cases_for_training)
                
-    elif method == "gbm":
+    elif method == "xgb":
         return ClassifierWrapper(
-            cls=GradientBoostingRegressor(n_estimators=n_estimators, max_features=max_features, learning_rate=gbm_learning_rate, random_state=random_state),
-            min_cases_for_training=min_cases_for_training)
-    elif method == "dt":
-        return ClassifierWrapper(
-            cls=DecisionTreeRegressor(random_state=random_state),
+            cls=xgb.XGBRegressor(n_estimators=n_estimators, learning_rate=learning_rate, subsample=subsample,
+                                     max_depth=max_depth, colsample_bytree=colsample_bytree),
             min_cases_for_training=min_cases_for_training)
 
     else:

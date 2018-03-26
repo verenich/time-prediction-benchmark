@@ -5,6 +5,7 @@ from sklearn.metrics import mean_absolute_error
 from sklearn.pipeline import Pipeline, FeatureUnion
 from time import time
 import pickle
+from numpy import array
 import os
 from sys import argv
 import itertools
@@ -59,13 +60,15 @@ else:
 
 # classification params to optimize
 if cls_method == "rf":
-    cls_params = {'n_estimators':[300],
+    cls_params = {'n_estimators':[250, 500],
                   'max_features':["sqrt", 0.1, 0.5, 0.75]}
     
-elif cls_method == "gbm":
-    cls_params = {'n_estimators':[100, 250, 500],
-                  'max_features':["sqrt", 0.25, 0.75],
-                  'gbm_learning_rate':[0.01, 0.05, 0.1]}
+elif cls_method == "xgb":
+    cls_params = {'n_estimators':[250, 500],
+                  'learning_rate':[0.02, 0.04, 0.06],
+                  'subsample':[0.5, 0.8],
+                  'max_depth': [3, 5, 7],
+                  'colsample_bytree': [0.5, 0.8]}
 
 bucketer_params_names = list(bucketer_params.keys())
 cls_params_names = list(cls_params.keys())
@@ -198,13 +201,14 @@ with open(outfile, 'w') as fout:
 
                             elif bucket not in pipelines:
                                 # use mean remaining time (in training set) as prediction
-                                preds_bucket = [np.mean(train_chunk["remtime"])] * len(relevant_cases_bucket)
+                                preds_bucket = array([np.mean(train_chunk["remtime"])] * len(relevant_cases_bucket))
                                 # preds_bucket = [dataset_manager.get_class_ratio(train_chunk)] * len(relevant_cases_bucket)
 
                             else:
                                 # make actual predictions
                                 preds_bucket = pipelines[bucket].predict_proba(dt_test_bucket)
 
+                            preds_bucket = preds_bucket.clip(min=0)  # if remaining time is predicted to be negative, make it zero
                             preds.extend(preds_bucket)
 
                             # extract actual label values
