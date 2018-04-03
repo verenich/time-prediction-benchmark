@@ -90,7 +90,7 @@ for row in data_best[data_best.method.str.contains("prefix")][
         value = row[4 + i]
         if param == "max_features":
             value = value if value == "sqrt" else float(value)
-        elif param in ["n_clusters", "n_estimators", "n_neighbors"]:
+        elif param in ["n_clusters", "n_estimators", "n_neighbors", "max_depth"]:
             value = int(value)
         elif param == "learning_rate":
             value = float(value)

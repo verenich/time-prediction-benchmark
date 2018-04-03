@@ -1,8 +1,8 @@
 #!/bin/bash -l
-for LEARNER in rf xgb
+for LEARNER in xgb
 do
-    for DATASET_NAME in sepsis
-    #for DATASET_NAME in bpic2017 traffic_fines
+    for DATASET_NAME in sepsis bpic2011 bpic2015 bpic2017 traffic_fines
+    #for DATASET_NAME in 
     do
         for BUCKET_METHOD in single prefix #state cluster
         do
