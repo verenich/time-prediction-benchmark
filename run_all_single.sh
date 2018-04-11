@@ -1,12 +1,12 @@
 #!/bin/bash -l
 for LEARNER in xgb
 do
-    for DATASET_NAME in sepsis bpic2011 bpic2015 bpic2017 traffic_fines
+    for DATASET_NAME in sepsis #bpic2011 bpic2015 bpic2017 traffic_fines
     #for DATASET_NAME in 
     do
-        for BUCKET_METHOD in single prefix #state cluster
+        for BUCKET_METHOD in single prefix state cluster
         do
-            for CLS_ENCODING in agg laststate index #combined
+            for CLS_ENCODING in agg laststate index combined
             do
                 if [ $DATASET_NAME == "sepsis" ] ; then
                     memory=10gb

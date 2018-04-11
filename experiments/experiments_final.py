@@ -66,7 +66,7 @@ n_min_cases_in_bucket = 30
 ##### MAIN PART ######    
 with open(outfile, 'w') as fout:
     
-    fout.write("%s;%s;%s;%s;%s;%s;%s\n"%("dataset", "method", "cls", "nr_events", "metric", "score", "nr_events"))
+    fout.write("%s;%s;%s;%s;%s;%s;%s\n"%("dataset", "method", "cls", "nr_events", "metric", "score", "nr_cases"))
     
     for dataset_name in datasets:
         
