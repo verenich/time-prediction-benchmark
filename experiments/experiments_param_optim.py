@@ -67,7 +67,7 @@ elif cls_method == "xgb":
     cls_params = {'n_estimators':[250, 500],
                   'learning_rate':[0.02, 0.04, 0.06],
                   'subsample':[0.5, 0.8],
-                  'max_depth': [3, 5, 7],
+                  'max_depth': [3, 6],
                   'colsample_bytree': [0.5, 0.8]}
 
 bucketer_params_names = list(bucketer_params.keys())
