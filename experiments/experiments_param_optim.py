@@ -54,7 +54,7 @@ methods = encoding_dict[cls_encoding]
 
 # bucketing params to optimize 
 if bucket_method == "cluster":
-    bucketer_params = {'n_clusters':[2, 5, 10, 20]}
+    bucketer_params = {'n_clusters':[2, 5, 10]}
 else:
     bucketer_params = {'n_clusters':[1]}
 
@@ -104,7 +104,7 @@ with open(outfile, 'w') as fout:
         del data
         
         part = 0
-        for train_chunk, test_chunk in dataset_manager.get_stratified_split_generator(train, n_splits=5):
+        for train_chunk, test_chunk in dataset_manager.get_stratified_split_generator(train, n_splits=4):
             part += 1
             print("Starting chunk %s..."%part)
             sys.stdout.flush()

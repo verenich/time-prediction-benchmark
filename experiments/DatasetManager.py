@@ -31,8 +31,7 @@ class DatasetManager:
         for col in self.dynamic_num_cols + self.static_num_cols:
             dtypes[col] = "float"
 
-        for col in self.label_col:
-            dtypes[col] = "float"
+        dtypes[self.label_col] = "float"  # remaining time should be float
 
         data = pd.read_csv(dataset_confs.filename[self.dataset_name], sep=";", dtype=dtypes)
         data[self.timestamp_col] = pd.to_datetime(data[self.timestamp_col])
