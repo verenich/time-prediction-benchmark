@@ -1,26 +1,21 @@
 #!/bin/bash -l
-for DATASET_NAME in CR
+for LEARNER in xgb
 do
-    for LSTM_SIZE in 100 200  #100 is fine
+    for DATASET_NAME in credit #bpic2012o bpic2012w credit helpdesk hospital minit sepsis bpic2011 bpic2015 bpic2017 traffic_fines
+    #for DATASET_NAME in 
     do
-        for N_LAYERS in 1 2 3  #2 is fine
+        for BUCKET_METHOD in cluster #single prefix state cluster
         do
-            for BATCH_SIZE in 32  #8 performs badly
+            for CLS_ENCODING in agg laststate index combined
             do
-                for ACTIVATION in relu linear
-                do
-                    for OPTIMIZER in rmsprop #adam is worse, at least for remtime
-                    do
-                        if [ $DATASET_NAME == "sepsis" ] ; then
-                            memory=3gb
-                        elif [ $DATASET_NAME == "bpi15" ] ; then
-                            memory=7gb
-                        else
-                            memory=4gb
-                        fi
-                        qsub -l mem=$memory -l walltime=12:00:00 -l nodes=1:ppn=5 -N job_"$DATASET_NAME"_"$LSTM_SIZE"_"$N_LAYERS"_"$BATCH_SIZE"_"$ACTIVATION"_"$OPTIMIZER" -v dataset=$DATASET_NAME,lstmsize=$LSTM_SIZE,nlayers=$N_LAYERS,batchsize=$BATCH_SIZE,activation=$ACTIVATION,optimizer=$OPTIMIZER run.sh
-                    done
-                done
+                if [ $DATASET_NAME == "hospital" ] ; then
+                    memory=15gb
+                elif [ $DATASET_NAME == "traffic_fines" ] ; then
+                    memory=15gb
+                else
+                    memory=5gb
+                fi
+                qsub -l mem=$memory -l walltime=43:00:00 -N job_"$DATASET_NAME"_"$BUCKET_METHOD"_"$CLS_ENCODING"_"$LEARNER" -v dataset=$DATASET_NAME,method=$BUCKET_METHOD,encoding=$CLS_ENCODING,learner=$LEARNER run.sh
             done
         done
     done

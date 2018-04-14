@@ -1,5 +1,3 @@
-import sys
-
 import dataset_confs
 
 import pandas as pd
