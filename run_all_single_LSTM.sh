@@ -1,5 +1,5 @@
 #!/bin/bash -l
-for DATASET_NAME in credit
+for DATASET_NAME in bpic20151 bpic20152 bpic20153 bpic20154 bpic20155 #helpdesk hospital minit sepsis bpic2011 bpic2017 traffic_fines
 do
     for LSTM_SIZE in 100 200  #100 is fine
     do
@@ -16,9 +16,9 @@ do
                         elif [ $DATASET_NAME == "bpi15" ] ; then
                             memory=7gb
                         else
-                            memory=4gb
+                            memory=6gb
                         fi
-                        qsub -l mem=$memory -l walltime=22:00:00 -l nodes=1:ppn=5 -N job_"$DATASET_NAME"_"$LSTM_SIZE"_"$N_LAYERS"_"$BATCH_SIZE"_"$ACTIVATION"_"$OPTIMIZER" -v dataset=$DATASET_NAME,lstmsize=$LSTM_SIZE,nlayers=$N_LAYERS,batchsize=$BATCH_SIZE,activation=$ACTIVATION,optimizer=$OPTIMIZER run_LSTM.sh
+                        qsub -l mem=$memory -l walltime=23:59:00 -l nodes=1:ppn=5 -N lstm_"$DATASET_NAME"_"$LSTM_SIZE"_"$N_LAYERS"_"$BATCH_SIZE"_"$ACTIVATION"_"$OPTIMIZER" -v dataset=$DATASET_NAME,lstmsize=$LSTM_SIZE,nlayers=$N_LAYERS,batchsize=$BATCH_SIZE,activation=$ACTIVATION,optimizer=$OPTIMIZER run_LSTM.sh
                     done
                 done
             done

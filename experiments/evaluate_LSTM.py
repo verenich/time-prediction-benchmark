@@ -44,6 +44,7 @@ checkpoint_prefix = os.path.join(home_dir, checkpoint_dir, "model_%s_%s_%s_%s_%s
 checkpoint_filepath = "%s.{epoch:02d}-{val_loss:.2f}.hdf5" % checkpoint_prefix
 
 model_filename = glob.glob("%s*.hdf5"%checkpoint_prefix)[-1]
+print(model_filename)
 outfile = os.path.join(home_dir, results_dir, "final_results_%s_%s_%s_%s_%s_%s_%s_%s_%s.csv" % (
     cls_method, dataset_ref, lstmsize, dropout, n_layers, batch_size, activation, optimizer, learning_rate))
 detailed_results_file = os.path.join(home_dir, detailed_results_dir, "detailed_%s_%s_%s_%s_%s_%s_%s_%s_%s.csv" % (

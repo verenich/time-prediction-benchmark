@@ -34,7 +34,7 @@ static_num_cols[dataset] = ["Age"]
 #### BPIC2015 settings ####
 for municipality in range(1,6):
 
-    dataset = "bpic2015_%s"%municipality
+    dataset = "bpic2015%s"%municipality
 
     filename[dataset] = "labeled_logs_csv_processed/BPIC15_%s.csv"%municipality
 
