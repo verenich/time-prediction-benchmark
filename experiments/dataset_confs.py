@@ -14,7 +14,7 @@ filename = {}
 #### BPIC2011 settings ####
 dataset = "bpic2011"
 
-filename[dataset] = "labeled_logs_csv_processed/BPIC11.csv"
+filename[dataset] = "logdata/bpic2011.csv"
 
 case_id_col[dataset] = "Case ID"
 activity_col[dataset] = "Activity code"
@@ -36,7 +36,7 @@ for municipality in range(1,6):
 
     dataset = "bpic2015%s"%municipality
 
-    filename[dataset] = "labeled_logs_csv_processed/BPIC15_%s.csv"%municipality
+    filename[dataset] = "logdata/bpic2015_%s.csv"%municipality
 
     case_id_col[dataset] = "Case ID"
     activity_col[dataset] = "Activity"
@@ -62,7 +62,7 @@ for municipality in range(1,6):
 #### BPIC2017 settings ####
 dataset = "bpic2017"
 
-filename[dataset] = "labeled_logs_csv_processed/BPIC17.csv"
+filename[dataset] = "logdata/bpic2017.csv"
 
 case_id_col[dataset] = "Case ID"
 activity_col[dataset] = "Activity"
@@ -82,7 +82,7 @@ static_num_cols[dataset] = ['RequestedAmount']
 #### Traffic fines settings ####
 dataset = "traffic_fines"
 
-filename[dataset] = "labeled_logs_csv_processed/traffic_fines.csv"
+filename[dataset] = "logdata/traffic_fines.csv"
 
 case_id_col[dataset] = "Case ID"
 activity_col[dataset] = "Activity"
@@ -102,7 +102,7 @@ static_num_cols[dataset] = ["amount", "points"]
 #### Sepsis Cases settings ####
 dataset = "sepsis"
 
-filename[dataset] = "labeled_logs_csv_processed/Sepsis.csv"
+filename[dataset] = "logdata/spsis.csv"
 
 case_id_col[dataset] = "Case ID"
 activity_col[dataset] = "Activity"
@@ -128,11 +128,11 @@ static_num_cols[dataset] = ['Age']
 #### BPI2012A settings ####
 dataset = "bpic2012a"
 
-filename[dataset] = "labeled_logs_csv_processed/BPI2012A.csv"
+filename[dataset] = "logdata/bpic2012a.csv"
 
-case_id_col[dataset] = "case_id"
-activity_col[dataset] = "activity_name"
-timestamp_col[dataset] = "time"
+case_id_col[dataset] = "Case ID"
+activity_col[dataset] = "Activity"
+timestamp_col[dataset] = "Complete Timestamp"
 label_col[dataset] = "remtime"
 pos_label[dataset] = "regular"
 neg_label[dataset] = "deviant"
@@ -148,11 +148,11 @@ static_num_cols[dataset] = ['AMOUNT_REQ']
 #### BPI2012O settings ####
 dataset = "bpic2012o"
 
-filename[dataset] = "labeled_logs_csv_processed/BPI2012O.csv"
+filename[dataset] = "logdata/bpic2012o.csv"
 
-case_id_col[dataset] = "case_id"
-activity_col[dataset] = "activity_name"
-timestamp_col[dataset] = "time"
+case_id_col[dataset] = "Case ID"
+activity_col[dataset] = "Activity"
+timestamp_col[dataset] = "Complete Timestamp"
 label_col[dataset] = "remtime"
 pos_label[dataset] = "regular"
 neg_label[dataset] = "deviant"
@@ -168,11 +168,11 @@ static_num_cols[dataset] = ['AMOUNT_REQ']
 #### BPI2012W settings ####
 dataset = "bpic2012w"
 
-filename[dataset] = "labeled_logs_csv_processed/BPI2012W.csv"
+filename[dataset] = "logdata/bpic2012w.csv"
 
-case_id_col[dataset] = "case_id"
-activity_col[dataset] = "activity_name"
-timestamp_col[dataset] = "time"
+case_id_col[dataset] = "Case ID"
+activity_col[dataset] = "Activity"
+timestamp_col[dataset] = "Complete Timestamp"
 label_col[dataset] = "remtime"
 pos_label[dataset] = "regular"
 neg_label[dataset] = "deviant"
@@ -188,9 +188,9 @@ static_num_cols[dataset] = ['AMOUNT_REQ']
 #### Credit requirements settings ####
 dataset = "credit"
 
-filename[dataset] = "labeled_logs_csv_processed/CreditRequirement.csv"
+filename[dataset] = "logdata/credit.csv"
 
-case_id_col[dataset] = "case_id"
+case_id_col[dataset] = "Case ID"
 activity_col[dataset] = "Activity"
 timestamp_col[dataset] = "Complete Timestamp"
 label_col[dataset] = "remtime"
@@ -208,11 +208,11 @@ static_num_cols[dataset] = []
 #### helpdesk settings ####
 dataset = "helpdesk"
 
-filename[dataset] = "labeled_logs_csv_processed/helpdesk.csv"
+filename[dataset] = "logdata/helpdesk.csv"
 
-case_id_col[dataset] = "case_id"
-activity_col[dataset] = "activity_name"
-timestamp_col[dataset] = "time"
+case_id_col[dataset] = "Case ID"
+activity_col[dataset] = "Activity"
+timestamp_col[dataset] = "Complete Timestamp"
 label_col[dataset] = "remtime"
 pos_label[dataset] = "regular"
 neg_label[dataset] = "deviant"
@@ -227,9 +227,9 @@ static_num_cols[dataset] = []
 #### hospital billing settings ####
 dataset = "hospital"
 
-filename[dataset] = "labeled_logs_csv_processed/hospital_billing_977.csv"
+filename[dataset] = "logdata/hospital.csv"
 
-case_id_col[dataset] = "case_id"
+case_id_col[dataset] = "Case ID"
 activity_col[dataset] = "Activity"
 timestamp_col[dataset] = "Complete Timestamp"
 label_col[dataset] = "remtime"
@@ -245,9 +245,9 @@ static_num_cols[dataset] = []
 
 
 #### minit invoice settings ####
-dataset = "minit"
+dataset = "invoice"
 
-filename[dataset] = "labeled_logs_csv_processed/minit_invoice_10.csv"
+filename[dataset] = "logdata/invoice.csv"
 
 case_id_col[dataset] = "Case ID"
 activity_col[dataset] = "Activity"

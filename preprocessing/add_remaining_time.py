@@ -3,7 +3,7 @@ import numpy as np
 import os
 
 input_data_folder = "../experiments/labeled_logs_csv"
-output_data_folder = "../experiments/labeled_logs_csv_processed"
+output_data_folder = "../experiments/logdata"
 
 filenames_bpic2011 = ["BPIC11.csv"]
 filenames_bpic2015 = ["BPIC15_%s.csv"%municipality for municipality in range(1,6)]

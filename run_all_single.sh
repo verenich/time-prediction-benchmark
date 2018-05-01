@@ -1,7 +1,7 @@
 #!/bin/bash -l
 for LEARNER in xgb
 do
-    for DATASET_NAME in credit #bpic2012o bpic2012w credit helpdesk hospital minit sepsis bpic2011 bpic2015 bpic2017 traffic_fines
+    for DATASET_NAME in credit #bpic2012o bpic2012w credit helpdesk hospital invoice sepsis bpic2011 bpic2015 bpic2017 traffic_fines
     #for DATASET_NAME in 
     do
         for BUCKET_METHOD in cluster #single prefix state cluster

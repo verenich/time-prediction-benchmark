@@ -4,7 +4,7 @@ import os
 import sys
 
 input_data_folder = "../orig_logs"
-output_data_folder = "../labeled_logs_csv_processed"
+output_data_folder = "../logdata"
 filenames = ["traffic_fines.csv"]
 
 

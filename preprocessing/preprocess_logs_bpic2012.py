@@ -3,7 +3,7 @@ import numpy as np
 import os
 
 input_data_folder = "../experiments/labeled_logs_csv"
-output_data_folder = "../experiments/labeled_logs_csv_processed"
+output_data_folder = "../experiments/logdata"
 filenames = ["BPIC12W.csv", "BPIC12W_no_dup.csv"]
 
 case_id_col = "Case ID"
