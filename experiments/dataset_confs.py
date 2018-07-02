@@ -102,7 +102,7 @@ static_num_cols[dataset] = ["amount", "points"]
 #### Sepsis Cases settings ####
 dataset = "sepsis"
 
-filename[dataset] = "logdata/spsis.csv"
+filename[dataset] = "logdata/sepsis.csv"
 
 case_id_col[dataset] = "Case ID"
 activity_col[dataset] = "Activity"
@@ -261,3 +261,23 @@ dynamic_cat_cols[dataset] = ["Activity", "Resource",  "ActivityFinalAction",  "E
 static_cat_cols[dataset] = ["CostCenter.Code",  "Supplier.City",    "Supplier.Name",    "Supplier.State"]
 dynamic_num_cols[dataset] = ["open_cases",    "timesincelastevent",    "timesincecasestart",    "event_nr"]
 static_num_cols[dataset] = ["InvoiceTotalAmountWithoutVAT"]
+
+
+
+#### production log settings ####
+dataset = "production"
+
+filename[dataset] = "logdata/Production_Data.csv"
+
+case_id_col[dataset] = "Case ID"
+activity_col[dataset] = "Activity"
+timestamp_col[dataset] = "Complete Timestamp"
+label_col[dataset] = "remtime"
+pos_label[dataset] = "regular"
+neg_label[dataset] = "deviant"
+
+# features for classifier
+dynamic_cat_cols[dataset] = ["Activity", "Resource", "Report Type", "Worker ID","weekday"]
+static_cat_cols[dataset] = ["Part Desc"]
+dynamic_num_cols[dataset] = ["Qty Completed", "Qty for MRB", "activity_duration", "hour", "timesincelastevent", "timesincecasestart", "event_nr", "open_cases"]
+static_num_cols[dataset] = ["Work Order Qty"]
