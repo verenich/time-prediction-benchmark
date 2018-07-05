@@ -5,7 +5,7 @@ import os
 
 
 filenames = glob.glob("*.csv")
-filenames = [filename for filename in filenames if os.path.getsize(filename) > 1000]
+filenames = [filename for filename in filenames if os.path.getsize(filename) > 10000]
 #filenames = ["CreditRequirement.csv"]
 
 timestamp_col = "Complete Timestamp" # column that indicates completion timestamp
@@ -32,7 +32,7 @@ def add_all_columns(group):
 
 
 
-with open("log_summary.csv", 'w') as fout:
+with open("log_summary.tsv", 'w') as fout:
     fout.write("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n" % (
     "log", "total_cases", "unique_activities", "total_events","avg_unique_events_per_trace", "mean_case_length",
     "std_case_length", "mean_case_duration","std_case_duration","mean_remtime","std_remtime"))

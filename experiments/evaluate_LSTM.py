@@ -29,7 +29,7 @@ batch_size = int(argv[5])
 learning_rate = float(argv[6])
 activation = argv[7]
 optimizer = argv[8]
-nb_epoch = 250
+nb_epoch = 500
 
 train_ratio = 0.8
 val_ratio = 0.2

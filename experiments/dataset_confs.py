@@ -17,7 +17,7 @@ dataset = "bpic2011"
 filename[dataset] = "logdata/bpic2011.csv"
 
 case_id_col[dataset] = "Case ID"
-activity_col[dataset] = "Activity code"
+activity_col[dataset] = "Activity"
 timestamp_col[dataset] = "Complete Timestamp"
 label_col[dataset] = "remtime"
 pos_label[dataset] = "deviant"

@@ -15,7 +15,7 @@ def get_classifier(method, n_estimators, max_features=None, learning_rate=None, 
     elif method == "xgb":
         return ClassifierWrapper(
             cls=xgb.XGBRegressor(n_estimators=n_estimators, learning_rate=learning_rate, subsample=subsample,
-                                     max_depth=max_depth, colsample_bytree=colsample_bytree),
+                                     max_depth=max_depth, colsample_bytree=colsample_bytree, n_jobs=2),
             min_cases_for_training=min_cases_for_training)
 
     else:

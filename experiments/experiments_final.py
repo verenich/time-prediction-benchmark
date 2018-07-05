@@ -15,12 +15,16 @@ import ClassifierFactory
 from DatasetManager import DatasetManager
 
 dataset_ref = argv[1]
-bucket_encoding = "agg"
 bucket_method = argv[2]
 cls_encoding = argv[3]
 cls_method = argv[4]
 optimal_params_filename = "training_params.pkl"
 results_dir = "../results/"
+
+if bucket_method == "state":
+    bucket_encoding = "last"
+else:
+    bucket_encoding = "agg"
 
 # dataset_ref = "bpic2015"
 # bucket_encoding = "bool"
@@ -184,7 +188,7 @@ with open(outfile, 'w') as fout:
                 test_y_bucket = dataset_manager.get_label_numeric(dt_test_bucket) # one row per case
                 test_y.extend(test_y_bucket)
 
-            if len(set(test_y)) < 2:
+            if len(test_y) < 2:
                 mae = None
             else:
                 mae = mean_absolute_error(test_y, preds)

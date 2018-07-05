@@ -16,11 +16,15 @@ import ClassifierFactory
 from DatasetManager import DatasetManager
 
 dataset_ref = argv[1]
-bucket_encoding = "agg"
 bucket_method = argv[2]
 cls_encoding = argv[3]
 cls_method = argv[4]
 results_dir = "../results/CV/"
+
+if bucket_method == "state":
+    bucket_encoding = "last"
+else:
+    bucket_encoding = "agg"
 
 # dataset_ref = "bpic2015"
 # bucket_encoding = "bool"
@@ -54,7 +58,7 @@ methods = encoding_dict[cls_encoding]
 
 # bucketing params to optimize 
 if bucket_method == "cluster":
-    bucketer_params = {'n_clusters':[2, 5, 10]}
+    bucketer_params = {'n_clusters':[2, 4, 6]}
 else:
     bucketer_params = {'n_clusters':[1]}
 
@@ -64,11 +68,11 @@ if cls_method == "rf":
                   'max_features':["sqrt", 0.1, 0.5, 0.75]}
     
 elif cls_method == "xgb":
-    cls_params = {'n_estimators':[250, 500],
+    cls_params = {'n_estimators':[100, 250, 500],
                   'learning_rate':[0.02, 0.04, 0.06],
                   'subsample':[0.5, 0.8],
-                  'max_depth': [3, 6],
-                  'colsample_bytree': [0.5, 0.8]}
+                  'max_depth': [3, 5, 7],
+                  'colsample_bytree': [0.6, 0.9]}
 
 bucketer_params_names = list(bucketer_params.keys())
 cls_params_names = list(cls_params.keys())
@@ -104,7 +108,7 @@ with open(outfile, 'w') as fout:
         del data
         
         part = 0
-        for train_chunk, test_chunk in dataset_manager.get_stratified_split_generator(train, n_splits=4):
+        for train_chunk, test_chunk in dataset_manager.get_stratified_split_generator(train, n_splits=3):
             part += 1
             print("Starting chunk %s..."%part)
             sys.stdout.flush()
@@ -215,7 +219,7 @@ with open(outfile, 'w') as fout:
                             test_y_bucket = dataset_manager.get_label_numeric(dt_test_bucket) # one row per case
                             test_y.extend(test_y_bucket)
 
-                        if len(set(test_y)) < 2:
+                        if len(test_y) < 2:
                             mae = None
                         else:
                             mae = mean_absolute_error(test_y, preds)
