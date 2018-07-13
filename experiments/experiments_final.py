@@ -1,24 +1,29 @@
 import pandas as pd
 import numpy as np
 from numpy import array
-import sys
 from sklearn.metrics import mean_absolute_error
 from sklearn.pipeline import Pipeline, FeatureUnion
-from time import time
+from sklearn.preprocessing import StandardScaler
+import time
 import pickle
 import os
 from sys import argv
 
 import EncoderFactory
 import BucketFactory
-import ClassifierFactory
 from DatasetManager import DatasetManager
+
+from sklearn.ensemble import RandomForestRegressor
+import xgboost as xgb
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.svm import SVR
 
 dataset_ref = argv[1]
 bucket_method = argv[2]
 cls_encoding = argv[3]
 cls_method = argv[4]
-optimal_params_filename = "training_params.pkl"
+gap = 1 # int(argv[5])
+n_iter = 3 # int(argv[6])
 results_dir = "../results/"
 
 if bucket_method == "state":
@@ -36,11 +41,10 @@ method_name = "%s_%s"%(bucket_method, cls_encoding)
 
 home_dir = ""
 
+# create results directory
 if not os.path.exists(os.path.join(home_dir, results_dir)):
     os.makedirs(os.path.join(home_dir, results_dir))
 
-with open(os.path.join(home_dir, optimal_params_filename), "rb") as fin:
-    best_params = pickle.load(fin)
 
 dataset_ref_to_datasets = {
     "bpic2011": ["bpic2011"],
@@ -58,145 +62,185 @@ encoding_dict = {
 datasets = [dataset_ref] if dataset_ref not in dataset_ref_to_datasets else dataset_ref_to_datasets[dataset_ref]
 methods = encoding_dict[cls_encoding]
 
-outfile = os.path.join(home_dir, results_dir, "final_results_%s_%s_%s.csv"%(cls_method, method_name, dataset_ref)) 
 
-    
 train_ratio = 0.8
 random_state = 22
-fillna = True
-n_min_cases_in_bucket = 30
-    
+
     
 ##### MAIN PART ######    
-with open(outfile, 'w') as fout:
-    
-    fout.write("%s;%s;%s;%s;%s;%s;%s\n"%("dataset", "method", "cls", "nr_events", "metric", "score", "nr_cases"))
-    
-    for dataset_name in datasets:
-        
-        dataset_manager = DatasetManager(dataset_name)
-        
-        # read the data
-        data = dataset_manager.read_dataset()
-        
-        # split data into train and test
-        train, test = dataset_manager.split_data(data, train_ratio)
-        
-        # consider prefix lengths until 90% of positive cases have finished
-        min_prefix_length = 1
-        max_prefix_length = min(20, dataset_manager.get_pos_case_length_quantile(data, 0.90))
-        del data
 
+for dataset_name in datasets:
+
+    # load optimal params
+    optimal_params_filename = os.path.join(home_dir, "optimal_params", "%s_%s_%s.pkl" % (cls_method, dataset_name, method_name))
+    if not os.path.isfile(optimal_params_filename) or os.path.getsize(optimal_params_filename) <= 0:
+        continue
+
+    with open(optimal_params_filename, "rb") as fin:
+        args = pickle.load(fin)
+
+    # read the data
+    dataset_manager = DatasetManager(dataset_name)
+    data = dataset_manager.read_dataset()
+
+    # split data into train and test
+    train, test = dataset_manager.split_data(data, train_ratio)
+
+    # consider prefix lengths until 90% of positive cases have finished
+    min_prefix_length = 1
+    max_prefix_length = min(20, dataset_manager.get_pos_case_length_quantile(data, 0.90))
+    del data
+
+    outfile = os.path.join(home_dir, results_dir, "Final_results_%s_%s_%s.csv" % (cls_method, method_name, dataset_name))
+
+    start_test_prefix_generation = time.time()
+    dt_test_prefixes = dataset_manager.generate_prefix_data(test, min_prefix_length, max_prefix_length)
+    test_prefix_generation_time = time.time() - start_test_prefix_generation
+    print(dt_test_prefixes.shape)
+
+    cls_encoder_args = {'case_id_col':dataset_manager.case_id_col,
+                        'static_cat_cols':dataset_manager.static_cat_cols,
+                        'static_num_cols':dataset_manager.static_num_cols,
+                        'dynamic_cat_cols':dataset_manager.dynamic_cat_cols,
+                        'dynamic_num_cols':dataset_manager.dynamic_num_cols,
+                        'fillna':True}
+
+    offline_total_times = []
+    online_event_times = []
+    train_prefix_generation_times = []
+    for ii in range(n_iter):
+        print(f"Starting iteration {ii}")
         # create prefix logs
-        dt_train_prefixes = dataset_manager.generate_prefix_data(train, min_prefix_length, max_prefix_length)
-        dt_test_prefixes = dataset_manager.generate_prefix_data(test, min_prefix_length, max_prefix_length)
+        start_train_prefix_generation = time.time()
+        dt_train_prefixes = dataset_manager.generate_prefix_data(train, min_prefix_length, max_prefix_length, gap)
+        train_prefix_generation_time = time.time() - start_train_prefix_generation
+        train_prefix_generation_times.append(train_prefix_generation_time)
 
-        print(dt_train_prefixes.shape)
-        print(dt_test_prefixes.shape)
-        
         # extract arguments
-        bucketer_args = {'encoding_method':bucket_encoding, 
-                         'case_id_col':dataset_manager.case_id_col, 
-                         'cat_cols':[dataset_manager.activity_col], 
-                         'num_cols':[], 
-                         'n_clusters':None, 
+        bucketer_args = {'encoding_method':bucket_encoding,
+                         'case_id_col':dataset_manager.case_id_col,
+                         'cat_cols':[dataset_manager.activity_col],
+                         'num_cols':[],
                          'random_state':random_state}
         if bucket_method == "cluster":
-            bucketer_args['n_clusters'] = best_params[dataset_name][method_name][cls_method]['n_clusters']
-        
-        cls_encoder_args = {'case_id_col':dataset_manager.case_id_col, 
-                            'static_cat_cols':dataset_manager.static_cat_cols,
-                            'static_num_cols':dataset_manager.static_num_cols, 
-                            'dynamic_cat_cols':dataset_manager.dynamic_cat_cols,
-                            'dynamic_num_cols':dataset_manager.dynamic_num_cols, 
-                            'fillna':fillna}
-        
-        
+            bucketer_args['n_clusters'] = int(args["n_clusters"])
+
         # Bucketing prefixes based on control flow
         print("Bucketing prefixes...")
         bucketer = BucketFactory.get_bucketer(bucket_method, **bucketer_args)
+        start_offline_time_bucket = time.time()
         bucket_assignments_train = bucketer.fit_predict(dt_train_prefixes)
-            
-        pipelines = {}
+        offline_time_bucket = time.time() - start_offline_time_bucket
 
-        # train and fit pipeline for each bucket
-        for bucket in set(bucket_assignments_train):
-            print("Fitting pipeline for bucket %s..."%bucket)
-            
-            # set optimal params for this bucket
+        bucket_assignments_test = bucketer.predict(dt_test_prefixes)
+
+        preds_all = []
+        test_y_all = []
+        nr_events_all = []
+        offline_time_fit = 0
+        current_online_event_times = []
+        for bucket in set(bucket_assignments_test):
             if bucket_method == "prefix":
-                cls_args = {k:v for k,v in best_params[dataset_name][method_name][cls_method][bucket].items() if k not in ['n_clusters', 'n_neighbors']}
+                current_args = args[bucket]
             else:
-                cls_args = {k:v for k,v in best_params[dataset_name][method_name][cls_method].items() if k not in ['n_clusters', 'n_neighbors']}
-            cls_args['random_state'] = random_state
-            cls_args['min_cases_for_training'] = n_min_cases_in_bucket
-        
-            # select relevant cases
-            relevant_cases_bucket = dataset_manager.get_indexes(dt_train_prefixes)[bucket_assignments_train == bucket]
-            dt_train_bucket = dataset_manager.get_relevant_data_by_indexes(dt_train_prefixes, relevant_cases_bucket) # one row per event
-            train_y = dataset_manager.get_label_numeric(dt_train_bucket)
-            
-            feature_combiner = FeatureUnion([(method, EncoderFactory.get_encoder(method, **cls_encoder_args)) for method in methods])
-            pipelines[bucket] = Pipeline([('encoder', feature_combiner), ('cls', ClassifierFactory.get_classifier(cls_method, **cls_args))])
-            
-            pipelines[bucket].fit(dt_train_bucket, train_y)
-            
-            
-        
-        prefix_lengths_test = dt_test_prefixes.groupby(dataset_manager.case_id_col).size()
-        
-        # test separately for each prefix length
-        for nr_events in range(min_prefix_length, max_prefix_length+1):
-            print("Predicting for %s events..."%nr_events)
+                current_args = args
+            relevant_train_cases_bucket = dataset_manager.get_indexes(dt_train_prefixes)[bucket_assignments_train == bucket]
+            relevant_test_cases_bucket = dataset_manager.get_indexes(dt_test_prefixes)[bucket_assignments_test == bucket]
+            dt_test_bucket = dataset_manager.get_relevant_data_by_indexes(dt_test_prefixes, relevant_test_cases_bucket)
 
-            # select only cases that are at least of length nr_events
-            relevant_cases_nr_events = prefix_lengths_test[prefix_lengths_test == nr_events].index
+            nr_events_all.extend(list(dataset_manager.get_prefix_lengths(dt_test_bucket)))
+            if len(relevant_train_cases_bucket) == 0:
+                preds = array([np.mean(train["remtime"])] * len(relevant_test_cases_bucket))
+                current_online_event_times.extend([0] * len(preds))
+            else:
+                dt_train_bucket = dataset_manager.get_relevant_data_by_indexes(dt_train_prefixes,
+                                                                               relevant_train_cases_bucket)  # one row per event
+                train_y = dataset_manager.get_label_numeric(dt_train_bucket)
 
-            if len(relevant_cases_nr_events) == 0:
-                break
-
-            dt_test_nr_events = dataset_manager.get_relevant_data_by_indexes(dt_test_prefixes, relevant_cases_nr_events)
-            del relevant_cases_nr_events
-
-            start = time()
-            # get predicted cluster for each test case
-            bucket_assignments_test = bucketer.predict(dt_test_nr_events)
-
-            # use appropriate classifier for each bucket of test cases
-            # for evaluation, collect predictions from different buckets together
-            preds = []
-            test_y = []
-            for bucket in set(bucket_assignments_test):
-                relevant_cases_bucket = dataset_manager.get_indexes(dt_test_nr_events)[bucket_assignments_test == bucket]
-                dt_test_bucket = dataset_manager.get_relevant_data_by_indexes(dt_test_nr_events, relevant_cases_bucket) # one row per event
-
-                if len(relevant_cases_bucket) == 0:
-                    continue
-
-                elif bucket not in pipelines: # TODO fix this
-                    # use the general class ratio (in training set) as prediction 
-                    preds_bucket = array([np.mean(train["remtime"])] * len(relevant_cases_bucket))
-
+                if len(set(train_y)) < 2:
+                    preds = [train_y[0]] * len(relevant_test_cases_bucket)
+                    current_online_event_times.extend([0] * len(preds))
+                    test_y_all.extend(dataset_manager.get_label_numeric(dt_test_bucket))
                 else:
-                    # make actual predictions
-                    preds_bucket = pipelines[bucket].predict_proba(dt_test_bucket)
+                    start_offline_time_fit = time.time()
+                    feature_combiner = FeatureUnion(
+                        [(method, EncoderFactory.get_encoder(method, **cls_encoder_args)) for method in methods])
 
-                preds_bucket = preds_bucket.clip(min=0)  # if remaining time is predicted to be negative, make it zero
-                preds.extend(preds_bucket)
+                    if cls_method == "rf":
+                        cls = RandomForestRegressor(n_estimators=500,
+                                                     max_features=current_args['max_features'],
+                                                     random_state=random_state)
 
-                # extract actual label values
-                test_y_bucket = dataset_manager.get_label_numeric(dt_test_bucket) # one row per case
-                test_y.extend(test_y_bucket)
+                    elif cls_method == "xgb":
+                        cls = xgb.XGBRegressor(n_estimators=int(current_args['n_estimators']),
+                                            #objective='binary:logistic',
+                                            learning_rate=current_args['learning_rate'],
+                                            subsample=current_args['subsample'],
+                                            max_depth=int(current_args['max_depth']),
+                                            colsample_bytree=current_args['colsample_bytree'],
+                                            n_jobs=3,
+                                            #min_child_weight=int(current_args['min_child_weight']),
+                                            seed=random_state)
 
-            if len(test_y) < 2:
-                mae = None
+                    elif cls_method == "svm":
+                        cls = SVR(C=2 ** current_args['C'],
+                              gamma=2 ** current_args['gamma'])
+
+                    if cls_method == "svm":
+                        pipeline = Pipeline([('encoder', feature_combiner), ('scaler', StandardScaler()), ('cls', cls)])
+                    else:
+                        pipeline = Pipeline([('encoder', feature_combiner), ('cls', cls)])
+
+                    pipeline.fit(dt_train_bucket, train_y)
+                    offline_time_fit += time.time() - start_offline_time_fit
+
+                    # predict separately for each prefix case
+                    preds = []
+                    test_all_grouped = dt_test_bucket.groupby(dataset_manager.case_id_col)
+                    for _, group in test_all_grouped:
+
+                        test_y_all.extend(dataset_manager.get_label_numeric(group))
+
+                        start = time.time()
+                        _ = bucketer.predict(group)
+                        if cls_method == "svm":
+                            pred = pipeline.predict(group)
+                        else:
+                            pred = pipeline.predict(group)
+
+                        pipeline_pred_time = time.time() - start
+                        current_online_event_times.append(pipeline_pred_time / len(group))
+                        pred = pred.clip(min=0)  # if remaining time is predicted to be negative, make it zero
+                        preds.extend(pred)
+
+            preds_all.extend(preds)
+
+        offline_total_time = offline_time_bucket + offline_time_fit + train_prefix_generation_time
+        offline_total_times.append(offline_total_time)
+        online_event_times.append(current_online_event_times)
+
+
+    with open(outfile, 'w') as fout:
+        fout.write("%s;%s;%s;%s;%s;%s;%s\n"%("dataset", "method", "cls", "nr_events", "metric", "score", "nr_cases"))
+
+        # fout.write("%s;%s;%s;%s;%s;%s;%s\n" % (dataset_name, method_name, cls_method, -1, -1, "test_prefix_generation_time", test_prefix_generation_time, -1))
+
+        # for ii in range(len(offline_total_times)):
+        #     fout.write("%s;%s;%s;%s;%s;%s;%s\n"%(dataset_name, method_name, cls_method, -1, ii, "train_prefix_generation_time", train_prefix_generation_times[ii], -1))
+        #     fout.write("%s;%s;%s;%s;%s;%s;%s\n"%(dataset_name, method_name, cls_method, -1, ii, "offline_time_total", offline_total_times[ii], -1))
+        #     fout.write("%s;%s;%s;%s;%s;%s;%s\n"%(dataset_name, method_name, cls_method, -1, ii, "online_time_avg", np.mean(online_event_times[ii]), -1))
+        #     fout.write("%s;%s;%s;%s;%s;%s;%s\n"%(dataset_name, method_name, cls_method, -1, ii, "online_time_std", np.std(online_event_times[ii]), -1))
+
+        dt_results = pd.DataFrame({"actual": test_y_all, "predicted": preds_all, "nr_events": nr_events_all})
+        for nr_events, group in dt_results.groupby("nr_events"):
+            if len(group.actual) < 2:
+                fout.write("%s;%s;%s;%s;%s;%s;%s\n"%(dataset_name, method_name, cls_method, nr_events, "mae", np.nan, len(group.actual)))
             else:
-                mae = mean_absolute_error(test_y, preds)
-            #prec, rec, fscore, _ = precision_recall_fscore_support(test_y, [0 if pred < 0.5 else 1 for pred in preds], average="binary")
+                fout.write("%s;%s;%s;%s;%s;%s;%s\n"%(dataset_name, method_name, cls_method, nr_events, "mae", mean_absolute_error(group.actual, group.predicted), len(group.actual)))
+        # fout.write("%s;%s;%s;%s;%s;%s;%s\n"%(dataset_name, method_name, cls_method, -1, "avg_mae", mean_absolute_error(dt_results.actual, dt_results.predicted), len(dt_results.actual)))
 
-            fout.write("%s;%s;%s;%s;%s;%s;%s\n"%(dataset_name, method_name, cls_method, nr_events, "mae", mae, len(test_y)))
-            #fout.write("%s;%s;%s;%s;%s;%s\n"%(dataset_name, method_name, cls_method, nr_events, "precision", prec))
-            #fout.write("%s;%s;%s;%s;%s;%s\n"%(dataset_name, method_name, cls_method, nr_events, "recall", rec))
-            #fout.write("%s;%s;%s;%s;%s;%s\n"%(dataset_name, method_name, cls_method, nr_events, "fscore", fscore))
-            
-        print("\n")
+        # online_event_times_flat = [t for iter_online_event_times in online_event_times for t in iter_online_event_times]
+        # fout.write("%s;%s;%s;%s;%s;%s;%s\n"%(dataset_name, method_name, cls_method, -1, -1, "online_time_avg", np.mean(online_event_times_flat), -1))
+        # fout.write("%s;%s;%s;%s;%s;%s;%s\n"%(dataset_name, method_name, cls_method, -1, -1, "online_time_std", np.std(online_event_times_flat), -1))
+        # fout.write("%s;%s;%s;%s;%s;%s;%s\n"%(dataset_name, method_name, cls_method, -1, -1, "offline_time_total_avg", np.mean(offline_total_times), -1))
+        # fout.write("%s;%s;%s;%s;%s;%s;%s\n"%(dataset_name, method_name, cls_method, -1, -1, "offline_time_total_std", np.std(offline_total_times), -1))
