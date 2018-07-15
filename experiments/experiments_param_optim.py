@@ -127,18 +127,19 @@ def create_and_evaluate_model(args):
 
                     if cls_method == "rf":
                         cls = RandomForestRegressor(n_estimators=500,
-                                                     max_features=args['max_features'],
-                                                     random_state=random_state)
+                                                    max_features=args['max_features'],
+                                                    max_depth=int(args['max_depth']),
+                                                    random_state=random_state)
 
                     elif cls_method == "xgb":
                         cls = xgb.XGBRegressor(n_estimators=args['n_estimators'],
-                                               # objective='binary:logistic',
+                                                # objective='binary:logistic',
                                                 learning_rate=args['learning_rate'],
                                                 subsample=args['subsample'],
                                                 max_depth=int(args['max_depth']),
                                                 colsample_bytree=args['colsample_bytree'],
-                                               n_jobs=3,
-                                                #min_child_weight=int(args['min_child_weight']),
+                                                n_jobs=3,
+                                                min_child_weight=int(args['min_child_weight']),
                                                 seed=random_state)
 
                     elif cls_method == "svm":
@@ -224,15 +225,18 @@ for dataset_name in datasets:
 
     # set up search space
     if cls_method == "rf":
-        space = {'max_features': hp.uniform('max_features', 0, 1)}
+        space = {
+            'max_features': hp.uniform('max_features', 0, 1),
+            'max_depth': scope.int(hp.quniform('max_depth', 3, 20, 1))
+        }
     elif cls_method == "xgb":
         space = {
-            'n_estimators': scope.int(hp.choice('n_estimators', np.arange(100, 700, step=1))),
-            'learning_rate': hp.uniform("learning_rate", 0, 0.2),
+            'n_estimators': scope.int(hp.choice('n_estimators', np.arange(100, 800, step=1))),
+            'learning_rate': hp.uniform("learning_rate", 0, 0.3),
             'subsample': hp.uniform("subsample", 0.5, 1),
-            'max_depth': scope.int(hp.quniform('max_depth', 3, 15, 1)),
-            'colsample_bytree': hp.uniform("colsample_bytree", 0.5, 1)
-                 #'min_child_weight': scope.int(hp.quniform('min_child_weight', 1, 6, 1))
+            'max_depth': scope.int(hp.quniform('max_depth', 3, 20, 1)),
+            'colsample_bytree': hp.uniform("colsample_bytree", 0.5, 1),
+            'min_child_weight': scope.int(hp.quniform('min_child_weight', 1, 6, 1))
         }
     elif cls_method == "svm":
         space = {
@@ -240,7 +244,7 @@ for dataset_name in datasets:
             'gamma': hp.uniform('gamma', -15, 15)
         }
     if bucket_method == "cluster":
-        space['n_clusters'] = scope.int(hp.quniform('n_clusters', 2, 10, 1))
+        space['n_clusters'] = scope.int(hp.quniform('n_clusters', 2, 8, 1))
 
     # optimize parameters
     trial_nr = 1

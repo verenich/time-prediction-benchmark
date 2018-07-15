@@ -137,6 +137,7 @@ for dataset_name in datasets:
         preds_all = []
         test_y_all = []
         nr_events_all = []
+        case_ids_all = []
         offline_time_fit = 0
         current_online_event_times = []
         for bucket in set(bucket_assignments_test):
@@ -149,6 +150,7 @@ for dataset_name in datasets:
             dt_test_bucket = dataset_manager.get_relevant_data_by_indexes(dt_test_prefixes, relevant_test_cases_bucket)
 
             nr_events_all.extend(list(dataset_manager.get_prefix_lengths(dt_test_bucket)))
+            case_ids_all.extend(dataset_manager.get_case_ids(dt_test_bucket))
             if len(relevant_train_cases_bucket) == 0:
                 preds = array([np.mean(train["remtime"])] * len(relevant_test_cases_bucket))
                 current_online_event_times.extend([0] * len(preds))
@@ -161,6 +163,7 @@ for dataset_name in datasets:
                     preds = [train_y[0]] * len(relevant_test_cases_bucket)
                     current_online_event_times.extend([0] * len(preds))
                     test_y_all.extend(dataset_manager.get_label_numeric(dt_test_bucket))
+                    #case_ids_all.extend(dataset_manager.get_case_ids(dt_test_bucket))
                 else:
                     start_offline_time_fit = time.time()
                     feature_combiner = FeatureUnion(
@@ -168,8 +171,9 @@ for dataset_name in datasets:
 
                     if cls_method == "rf":
                         cls = RandomForestRegressor(n_estimators=500,
-                                                     max_features=current_args['max_features'],
-                                                     random_state=random_state)
+                                                    max_features=current_args['max_features'],
+                                                    max_depth=int(current_args['max_depth']),
+                                                    random_state=random_state)
 
                     elif cls_method == "xgb":
                         cls = xgb.XGBRegressor(n_estimators=int(current_args['n_estimators']),
@@ -179,7 +183,7 @@ for dataset_name in datasets:
                                             max_depth=int(current_args['max_depth']),
                                             colsample_bytree=current_args['colsample_bytree'],
                                             n_jobs=3,
-                                            #min_child_weight=int(current_args['min_child_weight']),
+                                            min_child_weight=int(current_args['min_child_weight']),
                                             seed=random_state)
 
                     elif cls_method == "svm":
@@ -200,6 +204,7 @@ for dataset_name in datasets:
                     for _, group in test_all_grouped:
 
                         test_y_all.extend(dataset_manager.get_label_numeric(group))
+                        #case_ids_all.extend(dataset_manager.get_case_ids(group))
 
                         start = time.time()
                         _ = bucketer.predict(group)
@@ -231,7 +236,7 @@ for dataset_name in datasets:
         #     fout.write("%s;%s;%s;%s;%s;%s;%s\n"%(dataset_name, method_name, cls_method, -1, ii, "online_time_avg", np.mean(online_event_times[ii]), -1))
         #     fout.write("%s;%s;%s;%s;%s;%s;%s\n"%(dataset_name, method_name, cls_method, -1, ii, "online_time_std", np.std(online_event_times[ii]), -1))
 
-        dt_results = pd.DataFrame({"actual": test_y_all, "predicted": preds_all, "nr_events": nr_events_all})
+        dt_results = pd.DataFrame({"case_id": case_ids_all, "actual": test_y_all, "predicted": preds_all, "nr_events": nr_events_all})
         for nr_events, group in dt_results.groupby("nr_events"):
             if len(group.actual) < 2:
                 fout.write("%s;%s;%s;%s;%s;%s;%s\n"%(dataset_name, method_name, cls_method, nr_events, "mae", np.nan, len(group.actual)))

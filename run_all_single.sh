@@ -15,7 +15,7 @@ do
                 else
                     memory=4gb
                 fi
-                qsub -l mem=$memory -l walltime=16:00:00 -l nodes=1:ppn=2 -N job_"$DATASET_NAME"_"$BUCKET_METHOD"_"$CLS_ENCODING"_"$LEARNER" -v dataset=$DATASET_NAME,method=$BUCKET_METHOD,encoding=$CLS_ENCODING,learner=$LEARNER run.sh
+                qsub -l mem=$memory -l walltime=16:00:00 -l nodes=1:ppn=3 -N job_"$DATASET_NAME"_"$BUCKET_METHOD"_"$CLS_ENCODING"_"$LEARNER" -v dataset=$DATASET_NAME,method=$BUCKET_METHOD,encoding=$CLS_ENCODING,learner=$LEARNER run.sh
             done
         done
     done

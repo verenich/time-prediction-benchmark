@@ -35,7 +35,7 @@ for dataset_name in datasets:
 
 
 bucket_methods = ["prefix"]
-cls_encodings = ["index"]
+cls_encodings = ["laststate", "agg", "index"]
 
 
 for dataset_name in datasets:

@@ -1,1 +1,142 @@
-{}
+{
+   "1": {
+      "colsample_bytree": 0.9919899137657946,
+      "learning_rate": 0.015561091638424491,
+      "max_depth": 15.0,
+      "n_estimators": 176.0,
+      "subsample": 0.8487386069670666
+   },
+   "2": {
+      "colsample_bytree": 0.644307015272531,
+      "learning_rate": 0.1927813951113632,
+      "max_depth": 11.0,
+      "n_estimators": 372.0,
+      "subsample": 0.7970482791084218
+   },
+   "3": {
+      "colsample_bytree": 0.9709599770084152,
+      "learning_rate": 0.10935901636552392,
+      "max_depth": 14.0,
+      "n_estimators": 321.0,
+      "subsample": 0.9489497139689664
+   },
+   "4": {
+      "colsample_bytree": 0.9483465426303972,
+      "learning_rate": 0.01911551661899012,
+      "max_depth": 13.0,
+      "n_estimators": 541.0,
+      "subsample": 0.9882582781898004
+   },
+   "5": {
+      "colsample_bytree": 0.9957404196503022,
+      "learning_rate": 0.03167659305351888,
+      "max_depth": 15.0,
+      "n_estimators": 443.0,
+      "subsample": 0.8503809549348359
+   },
+   "6": {
+      "colsample_bytree": 0.8202341387519829,
+      "learning_rate": 0.03298745151567574,
+      "max_depth": 10.0,
+      "n_estimators": 334.0,
+      "subsample": 0.8776595987719982
+   },
+   "7": {
+      "colsample_bytree": 0.9999074768447788,
+      "learning_rate": 0.016853973965735798,
+      "max_depth": 4.0,
+      "n_estimators": 620.0,
+      "subsample": 0.8832549461853397
+   },
+   "8": {
+      "colsample_bytree": 0.644307015272531,
+      "learning_rate": 0.1927813951113632,
+      "max_depth": 11.0,
+      "n_estimators": 372.0,
+      "subsample": 0.7970482791084218
+   },
+   "9": {
+      "colsample_bytree": 0.9097313163355928,
+      "learning_rate": 0.1867926962999,
+      "max_depth": 14.0,
+      "n_estimators": 580.0,
+      "subsample": 0.6640161474486636
+   },
+   "10": {
+      "colsample_bytree": 0.9018048834526614,
+      "learning_rate": 0.09275460053775936,
+      "max_depth": 9.0,
+      "n_estimators": 200.0,
+      "subsample": 0.9271967691485176
+   },
+   "11": {
+      "colsample_bytree": 0.9213758992865946,
+      "learning_rate": 0.07142178681803131,
+      "max_depth": 4.0,
+      "n_estimators": 378.0,
+      "subsample": 0.7842362200698607
+   },
+   "12": {
+      "colsample_bytree": 0.6887821643978635,
+      "learning_rate": 0.10625026598802306,
+      "max_depth": 4.0,
+      "n_estimators": 610.0,
+      "subsample": 0.999997253517218
+   },
+   "13": {
+      "colsample_bytree": 0.8608820018034349,
+      "learning_rate": 0.10875005212215244,
+      "max_depth": 3.0,
+      "n_estimators": 154.0,
+      "subsample": 0.8696292412452675
+   },
+   "14": {
+      "colsample_bytree": 0.5939877972560466,
+      "learning_rate": 0.1886517253643609,
+      "max_depth": 9.0,
+      "n_estimators": 505.0,
+      "subsample": 0.9334139051069508
+   },
+   "15": {
+      "colsample_bytree": 0.9097313163355928,
+      "learning_rate": 0.1867926962999,
+      "max_depth": 14.0,
+      "n_estimators": 580.0,
+      "subsample": 0.6640161474486636
+   },
+   "16": {
+      "colsample_bytree": 0.9966435863832964,
+      "learning_rate": 0.05993399036985151,
+      "max_depth": 6.0,
+      "n_estimators": 208.0,
+      "subsample": 0.6809252573432187
+   },
+   "17": {
+      "colsample_bytree": 0.6066204377757272,
+      "learning_rate": 0.12988080617122785,
+      "max_depth": 8.0,
+      "n_estimators": 280.0,
+      "subsample": 0.6386760275842962
+   },
+   "18": {
+      "colsample_bytree": 0.8608820018034349,
+      "learning_rate": 0.10875005212215244,
+      "max_depth": 3.0,
+      "n_estimators": 154.0,
+      "subsample": 0.8696292412452675
+   },
+   "19": {
+      "colsample_bytree": 0.8657605415409928,
+      "learning_rate": 0.1802155219443307,
+      "max_depth": 7.0,
+      "n_estimators": 187.0,
+      "subsample": 0.8417920281774408
+   },
+   "20": {
+      "colsample_bytree": 0.9146220726220756,
+      "learning_rate": 0.1938623141593333,
+      "max_depth": 5.0,
+      "n_estimators": 224.0,
+      "subsample": 0.6044449582817402
+   }
+}

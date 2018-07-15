@@ -81,7 +81,7 @@ class DatasetManager:
             tmp["orig_case_id"] = tmp[self.case_id_col]
             tmp[self.case_id_col] = tmp[self.case_id_col].apply(lambda x: "%s_%s" % (x, nr_events))
             tmp["prefix_nr"] = nr_events
-            dt_prefixes = pd.concat([dt_prefixes, tmp], axis=0)
+            dt_prefixes = pd.concat([dt_prefixes, tmp], axis=0, sort=True)
 
         dt_prefixes['case_length'] = dt_prefixes['case_length'].apply(lambda x: min(max_length, x))
 
@@ -107,6 +107,12 @@ class DatasetManager:
 
     def get_prefix_lengths(self, data):
         return data.groupby(self.case_id_col).last()["prefix_nr"]
+
+    def get_case_ids(self, data, nr_events=1):
+        case_ids = pd.Series(data.groupby(self.case_id_col).first().index)
+        if nr_events > 1:
+            case_ids = case_ids.apply(lambda x: "_".join(x.split("_")[:-1]))
+        return case_ids
     
     def get_class_ratio(self, data):
         class_freqs = data[self.label_col].value_counts()
