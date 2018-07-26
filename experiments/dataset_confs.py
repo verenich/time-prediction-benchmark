@@ -24,7 +24,7 @@ pos_label[dataset] = "deviant"
 neg_label[dataset] = "regular"
 
 # features for classifier
-dynamic_cat_cols[dataset] = ["Activity code", "Producer code", "Section", "Specialism code", "group"]
+dynamic_cat_cols[dataset] = ["Activity", "Producer code", "Section", "Specialism code", "group"]
 static_cat_cols[dataset] = ["Diagnosis", "Treatment code", "Diagnosis code", "case Specialism code", "Diagnosis Treatment Combination ID"]
 dynamic_num_cols[dataset] = ["Number of executions", "duration", "month", "weekday", "hour"]
 static_num_cols[dataset] = ["Age"]
@@ -138,7 +138,7 @@ pos_label[dataset] = "regular"
 neg_label[dataset] = "deviant"
 
 # features for classifier
-dynamic_cat_cols[dataset] = ['activity_name', 'Resource']
+dynamic_cat_cols[dataset] = ['Activity', 'Resource']
 static_cat_cols[dataset] = []
 dynamic_num_cols[dataset] = ['open_cases','elapsed']
 static_num_cols[dataset] = ['AMOUNT_REQ']
@@ -158,7 +158,7 @@ pos_label[dataset] = "regular"
 neg_label[dataset] = "deviant"
 
 # features for classifier
-dynamic_cat_cols[dataset] = ['activity_name', 'Resource']
+dynamic_cat_cols[dataset] = ['Activity', 'Resource']
 static_cat_cols[dataset] = []
 dynamic_num_cols[dataset] = ['open_cases','elapsed']
 static_num_cols[dataset] = ['AMOUNT_REQ']
@@ -178,7 +178,7 @@ pos_label[dataset] = "regular"
 neg_label[dataset] = "deviant"
 
 # features for classifier
-dynamic_cat_cols[dataset] = ['activity_name', 'Resource']
+dynamic_cat_cols[dataset] = ['Activity', 'Resource']
 static_cat_cols[dataset] = []
 dynamic_num_cols[dataset] = ['open_cases','elapsed','proctime']
 static_num_cols[dataset] = ['AMOUNT_REQ']
@@ -218,7 +218,7 @@ pos_label[dataset] = "regular"
 neg_label[dataset] = "deviant"
 
 # features for classifier
-dynamic_cat_cols[dataset] = ['activity_name','Resource']
+dynamic_cat_cols[dataset] = ['Activity','Resource']
 static_cat_cols[dataset] = ["customer", "product",   "responsible_section",  "seriousness",  "service_level",   "service_type",  "support_section"]
 dynamic_num_cols[dataset] = ['open_cases','elapsed']
 static_num_cols[dataset] = []
