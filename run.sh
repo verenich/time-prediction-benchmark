@@ -16,9 +16,9 @@ python -V
 export PYTHONPATH=/home/n9334378/time-prediction-benchmark/
 cd /home/n9334378/time-prediction-benchmark/experiments
 echo "started hyperparameter optimization at $(date)"
-python experiments_param_optim.py $dataset $method $encoding $learner
+#python experiments_param_optim.py $dataset $method $encoding $learner
 echo "finished hyperparameter optimization at $(date)"
-python extract_best_params.py
+#python extract_best_params.py
 echo "started experiments with optimal parameters at $(date)"
 python experiments_final.py $dataset $method $encoding $learner
-echo "finished experiments with optimal parameters at $(date)"
+# echo "finished experiments with optimal parameters at $(date)"

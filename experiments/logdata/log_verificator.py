@@ -33,8 +33,8 @@ def add_all_columns(group):
 
 
 with open("log_summary.tsv", 'w') as fout:
-    fout.write("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n" % (
-    "log", "total_cases", "unique_activities", "total_events","avg_unique_events_per_trace", "mean_case_length",
+    fout.write("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n" % (
+    "log", "total_cases", "unique_traces", "unique_activities", "total_events","avg_unique_events_per_trace", "mean_case_length",
     "std_case_length", "mean_case_duration","std_case_duration","mean_remtime","std_remtime"))
     for filename in filenames:
         print(filename)
@@ -42,6 +42,7 @@ with open("log_summary.tsv", 'w') as fout:
         data = pd.read_csv(filename, sep=";")
         data[timestamp_col] = pd.to_datetime(data[timestamp_col])
         data = data.groupby(case_id_col).apply(add_all_columns)
+        n_unique_traces = data.sort_values(timestamp_col, kind="mergesort").groupby(case_id_col)[activity_col].apply(lambda x: "__".join(list(x))).nunique()
         df0 = data.loc[data["event_nr"] == 1].copy()
         df0["UER"] = df0["unique_events"] / df0["total_events"]
         #print("Avg percentage of unique timestamps per trace: %.3f" %np.mean(df0["UTR"]))
@@ -50,8 +51,8 @@ with open("log_summary.tsv", 'w') as fout:
         #print("%s cases that reach length %d" %(df.shape[0],cutoff))
         #print("In %s of them elapsed time is still 0" %len(df.loc[df["elapsed"]==0]))
         #print("%s cases that reach length %d" %(df.shape[0],cutoff))
-        fout.write("%s, %s, %s, %s, %.3f, %.3f, %.3f, %.3f, %.3f, %.3f, %.3f\n"%(filename,
-                                                                                 data[case_id_col].nunique(),
+        fout.write("%s, %s, %s, %s, %s, %.3f, %.3f, %.3f, %.3f, %.3f, %.3f, %.3f\n"%(filename,
+                                                                                 data[case_id_col].nunique(),n_unique_traces,
                                                                                  data[activity_col].nunique(),
                                                                                  data.shape[0],
                                                                                  np.mean(df0["UER"]),
