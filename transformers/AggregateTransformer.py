@@ -39,6 +39,7 @@ class AggregateTransformer(TransformerMixin):
             dt_transformed = dt_transformed.groupby(self.case_id_col).max()
         else:
             dt_transformed = dt_transformed.groupby(self.case_id_col).sum()
+            print(dt_transformed.columns)
         
         # concatenate
         if len(self.num_cols) > 0:

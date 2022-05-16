@@ -31,8 +31,17 @@ class DatasetManager:
 
         dtypes[self.label_col] = "float"  # remaining time should be float
 
+        print(dataset_confs.filename[self.dataset_name])
+
         data = pd.read_csv(dataset_confs.filename[self.dataset_name], sep=";", dtype=dtypes)
         data[self.timestamp_col] = pd.to_datetime(data[self.timestamp_col])
+
+
+        # #remove incomplete traces i.e. those ending with send fine
+        # segment_indices = pd.read_csv("logdata/incomplete_cases.csv")["Case ID"]
+        # indexes = set(segment_indices)
+        #
+        # data = data[data[self.case_id_col].isin(indexes)]
 
         return data
 
@@ -61,6 +70,7 @@ class DatasetManager:
             dt_prefixes = pd.concat([dt_prefixes, tmp], axis=0)
         
         dt_prefixes['case_length'] = dt_prefixes.groupby(self.case_id_col)[self.activity_col].transform(len)
+
         
         return dt_prefixes
 

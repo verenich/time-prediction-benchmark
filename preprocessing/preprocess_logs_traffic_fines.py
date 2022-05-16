@@ -3,14 +3,15 @@ import numpy as np
 import os
 import sys
 
-input_data_folder = "../orig_logs"
-output_data_folder = "../logdata"
-filenames = ["traffic_fines.csv"]
+input_data_folder = "../../../Master_Thesis_Project/prepared_data/"
+output_data_folder = "../experiments/logdata/"
+filenames = ["bpi20.csv"]
 
 
 case_id_col = "Case ID"
 activity_col = "Activity"
 timestamp_col = "Complete Timestamp"
+resource_col = "Resource"
 label_col = "label"
 pos_label = "deviant"
 neg_label = "regular"
@@ -20,10 +21,11 @@ max_category_levels = 10
 
 
 # features for classifier
-dynamic_cat_cols = ["Activity", "Resource", "lastSent", "notificationType", "dismissal"]
-static_cat_cols = ["article", "vehicleClass"]
-dynamic_num_cols = ["expense"]
-static_num_cols = ["amount", "points"]
+# features for classifier
+static_cat_cols = ["BudgetNumber", "DeclarationNumber"]
+static_num_cols = ["Amount"]
+dynamic_cat_cols =[activity_col,resource_col,"id"]
+dynamic_num_cols = []
 
 static_cols = static_cat_cols + static_num_cols + [case_id_col]
 dynamic_cols = dynamic_cat_cols + dynamic_num_cols + [timestamp_col]
@@ -36,12 +38,12 @@ def extract_timestamp_features(group):
     start_date = group[timestamp_col].iloc[-1]
     
     tmp = group[timestamp_col] - group[timestamp_col].shift(-1)
-    tmp = tmp.fillna(0)
-    group["duration"] = tmp.apply(lambda x: float(x / np.timedelta64(1, 'm'))) # m is for minutes
+    tmp = tmp.fillna(pd.Timedelta(minutes=0))
+    group["duration"] = tmp.apply(lambda x: float(x / pd.Timedelta(minutes=1))) # m is for minutes
     
-    group["month"] = group[timestamp_col].dt.month
-    group["weekday"] = group[timestamp_col].dt.weekday
-    group["hour"] = group[timestamp_col].dt.hour
+    group["month"] = pd.to_datetime(group[timestamp_col]).dt.month
+    group["weekday"] = pd.to_datetime(group[timestamp_col]).dt.weekday
+    group["hour"] = pd.to_datetime(group[timestamp_col]).dt.hour
     
     return group
 
@@ -60,17 +62,17 @@ def assign_label(group):
 for filename in filenames:
     print("Starting...")
     sys.stdout.flush()
-    data = pd.read_csv(os.path.join(input_data_folder,filename), sep=";")
+    data = pd.read_csv(os.path.join(input_data_folder,filename), sep=",")[:100]
     
     data.rename(columns=lambda x: x.replace('(case) ', ''), inplace=True)
     
     data = data[static_cols + dynamic_cols]
-        
+    print(data.head())
     print("Adding timestamp features...")
     sys.stdout.flush()
     # add features extracted from timestamp
-    data[timestamp_col] = pd.to_datetime(data[timestamp_col])
-    data = data.groupby(case_id_col).apply(extract_timestamp_features)
+    data[timestamp_col] = pd.to_datetime(data[timestamp_col],utc=True)
+    data = data.groupby(case_id_col).apply(extract_timestamp_features).rest
     
     print("Assigning labels...")
     sys.stdout.flush()

@@ -1,4 +1,4 @@
-import dataset_confs
+ import dataset_confs
 
 import pandas as pd
 import numpy as np
@@ -144,7 +144,7 @@ class DatasetManager:
         for _, group in grouped:
             group = group.sort_values(self.timestamp_col, ascending=True, kind="mergesort")
             label = group[self.label_col]
-            group = group.as_matrix()
+            group = group.to_numpy()
             for i in range(1, len(group) + 1):
                 X[idx] = pad_sequences(group[np.newaxis, :i, :-3], maxlen=max_len, dtype=np.float64)
                 y_o[idx] = label.iloc[i - 1]
@@ -173,7 +173,7 @@ class DatasetManager:
                 continue
             group = group.sort_values(self.timestamp_col, ascending=True, kind="mergesort")
             label = group[self.label_col].iloc[nr_events - 1]
-            group = group.as_matrix()
+            group = group.to_numpy()
             X[idx] = pad_sequences(group[np.newaxis, :nr_events, :-3], maxlen=max_len, dtype=np.float64)
 
             y_o[idx] = label

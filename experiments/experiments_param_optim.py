@@ -66,13 +66,14 @@ else:
 if cls_method == "rf":
     cls_params = {'n_estimators':[250, 500],
                   'max_features':["sqrt", 0.1, 0.5, 0.75]}
+
     
 elif cls_method == "xgb":
-    cls_params = {'n_estimators':[100, 250, 500],
-                  'learning_rate':[0.02, 0.04, 0.06],
-                  'subsample':[0.5, 0.8],
-                  'max_depth': [3, 5, 7],
-                  'colsample_bytree': [0.6, 0.9]}
+    cls_params = {'n_estimators': [100,500],
+    'learning_rate': [0.02,0.04,0.06],
+    'subsample': [0.5,0.8],
+    'max_depth': [3,5,7],
+    'colsample_bytree': [0.6,0.9]}
 
 bucketer_params_names = list(bucketer_params.keys())
 cls_params_names = list(cls_params.keys())
